@@ -1,0 +1,22 @@
+{
+    "invalidEmails": [
+        "testuser rentzila@gmail.com",
+        "еуіегіуккутеяшдф",
+        "testuserrentzilagmail.com",
+        "testuserrentzila@gmailcom",
+        "testuserrentzila@gmail",
+        "testuserrentzila@.com",
+        "testuserrentzila",
+        "testuserrentzila@@gmail.com",
+        "  testuserrentzila@gmail.com",
+        "testuserrentzila@gmail.com  "
+    ],
+    "nonExistingEmail": "testuserrentzila99@gmail.com",
+    "invalidPasswords": [
+        "Testuser10  ",
+        "  Testuser10",
+        "testuser10",
+        "TESTUSER10",
+        "Еуіегіук10"
+    ]
+}
