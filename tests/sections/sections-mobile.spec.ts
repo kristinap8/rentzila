@@ -48,11 +48,11 @@ test.describe('Sections check', () => {
         await mainPage.openUrl();
     });
 
-    test('C212 - Checking "Послуги" section on the main page', async ({ mainPage, navBar, unitsPage, unitDetailsPage, helper, endpointsData, servicesData }) => {
+    test('C212 Mobile - Checking "Послуги" section on the main page', async ({ mainPage, navBar, unitsPage, unitDetailsPage, helper, endpointsData, servicesData }) => {
         await checkSection(mainPage, navBar, unitsPage, unitDetailsPage, helper, endpointsData, "services", servicesData);
     });
 
-    test('C213 - Checking "Спецтехніка" section on the main page', async ({ mainPage, navBar, unitsPage, unitDetailsPage, helper, endpointsData, vehiclesData }) => {
+    test('C213 Mobile - Checking "Спецтехніка" section on the main page', async ({ mainPage, navBar, unitsPage, unitDetailsPage, helper, endpointsData, vehiclesData }) => {
        await checkSection(mainPage, navBar, unitsPage, unitDetailsPage, helper, endpointsData, "vehicles", vehiclesData);
     });
 });
