@@ -1,5 +1,0 @@
-{
-    "validName":"Test",
-    "validPhoneNumber" : "+380506743060",
-    "invalidPhoneNumbers": ["+38063 111 111", "+1 1111111111111"]
-}
