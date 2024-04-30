@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { NavBar } from '../pages/components/navbar';
-import { ProductsPage } from '../pages/products.page';
+import { ProductsPage } from '../pages/units.page';
 import { UnitDetailsPage } from '../pages/unitDetails.page';
 import searchData from '../fixtures/searchData.json';
 

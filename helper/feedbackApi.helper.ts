@@ -10,14 +10,14 @@ export interface feedback {
 }
 
 const loginData = {
-    adminEmail: process.env.ADMIN_EMAIL,
-    adminPassword: process.env.ADMIN_PASSWORD,
-    adminPhone: process.env.ADMIN_PHONE_NUMBER
+    adminEmail: String(process.env.ADMIN_EMAIL),
+    adminPassword: String(process.env.ADMIN_PASSWORD),
+    adminPhone: String(process.env.ADMIN_PHONE_NUMBER)
 }
 
 class FeedbackApiHelper {
     private baseURL: string;
-    private accessToken: any = null;
+    private accessToken: string;
     private apiContext: Promise<APIRequestContext>;
 
     constructor() {
@@ -40,7 +40,7 @@ class FeedbackApiHelper {
     }
 
     public async getCreatedFeedback(name: string, phone: string) {
-        this.accessToken = await this.createAccessToken(loginData.adminEmail || '', loginData.adminPassword || '', loginData.adminPhone || '')
+        this.accessToken = await this.createAccessToken(loginData.adminEmail, loginData.adminPassword, loginData.adminPhone)
         const jsonResponse = await (await (await this.apiContext).get('backcall/', {
             params: {
                 'name': name,

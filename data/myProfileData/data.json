@@ -1,0 +1,176 @@
+{
+    "invalidProfilePhotos": {
+        "invalidFormat": "invalidProfilePhoto.txt",
+        "largeSize": "largeProfilePhoto.jpg"
+    },
+    "validProfilePhoto": "validProfilePhoto.jpg",
+    "defaultProfilePhoto": "defaultProfilePhoto.jpg",
+    "invalidPhotoPopUpTitle": "Невалідне фото",
+    "invalidPhotoPopUpErrorMsgs": {
+        "invalidFormat": "Формат зображення не підтримується. Допустимі формати: .jpg, .jpeg, .png.",
+        "largeSize": "Занадто великий розмір файлу. Розмір файлу не повинен перевищувати 5 мб."
+    },
+    "fieldsErrorClasses": {
+        "individualTaxpayerNumber": "inputError",
+        "enterpreneurTaxpayerNumber": "inputError",
+        "edrpou": "inputError",
+        "legalEntityName": "inputError",
+        "surname":  "inputError",
+        "name": "inputError",
+        "patronymic": "inputError",
+        "city": "inputError",
+        "phoneNumber": "error"
+    },
+    "fieldsErrorMsgs": {
+        "individualTaxpayerNumber": {
+            "less": "Код ІПН не може бути коротше 10 символів"
+        },
+        "enterpreneurTaxpayerNumber": {
+            "less": "Код ІПН не може бути коротше 10 символів",
+            "empty": "Це поле обов’язкове"
+        },
+        "edrpou": {
+            "less": "Код ЄДРПОУ не може бути коротше 8 символів",
+            "empty": "Це поле обов’язкове"
+        },
+        "legalEntityName": {
+            "empty": "Це поле обов’язкове"
+        },
+        "surname": {
+            "less": "Прізвище має містити щонайменше 2 літери",
+            "empty": "Це поле обов’язкове",
+            "invalid": "Прізвище має містити лише літери"
+        },
+        "name": {
+            "less": "Ім'я має містити щонайменше 2 літери",
+            "empty": "Це поле обов’язкове",
+            "invalid": "Ім'я має містити лише літери"
+        },
+        "patronymic": {
+            "less": "По-батькові має містити щонайменше 2 літери",
+            "invalid": "По-батькові має містити лише літери"
+        },
+        "city": {
+            "invalid": "Некоректно введена назва населеного пункту"
+        },
+        "phoneNumber": {
+            "invalid": "Некоректний номер телефону",
+            "notVerified": "Спочатку верифікуйте номер телефону"
+        }
+    },
+    "invalidIndividualTaxpayerNumber": {
+        "notAccepted": [
+            "abcghrertlg",
+            "!@#$%",
+            "          "
+        ],
+        "exceeding": "12345678910",
+        "less": "123456789"
+    },
+    "enterpreneurTaxpayerNumber": {
+        "notAccepted": [
+            "abcghrertlg",
+            "!@#$%",
+            "          "
+        ],
+        "exceeding": "12345678910",
+        "less": "123456789"
+    },
+    "edrpou": {
+        "notAccepted": [
+            "abcfghrt",
+            "@#$?><",
+            "        "
+        ],
+        "exceeding": "123456789",
+        "less": "1234567"
+    },
+    "legalEntityName": {
+        "notAccepted": [
+            "             ",
+            "^;<>{}"
+        ],
+        "exceeding": "legalentitylegalentitylega"
+    },
+    "surname": {
+        "notAccepted": [
+            "    ",
+            "^;<>{}"
+        ],
+        "invalid": [
+            "S1u2r3n4a5m6e7",
+            "S!u@r#n#a%m*e("
+        ],
+        "exceeding": "Surnamesurnamesurnamesurna",
+        "less": "S"
+    },
+    "name": {
+        "notAccepted": [
+            "    ",
+            "^;<>{}"
+        ],
+        "invalid": [
+            "N1a2m3e4",
+            "N@a#m%e_"
+        ],
+        "exceeding": "Namenamenamenamenamenamena",
+        "less": "N"
+    },
+    "patronymic": {
+        "notAccepted": [
+            "    ",
+            "^;<>{}"
+        ],
+        "invalid": [
+            "P1a2t3r4o5n6y7m8i9c",
+            "P#a_t-r@o!n!ym%i&c*"
+        ],
+        "exceeding": "Patronymicpatronymicpatron",
+        "less": "P"
+    },
+    "city": {
+        "notAccepted": [
+            "       ",
+            "^;<>{}"
+        ],
+        "invalid": [
+            "Прага",
+            "Aбвг"
+        ],
+        "exceeding": "Citycitycitycitycitycitycitycit"
+    },
+    "phoneNumber": {
+        "notAccepted": [
+            "abcghtci",
+            "@#\"{}>()",
+            "       "
+        ],
+        "invalid": [
+            "+447488855303",
+            "+380117865456"
+        ],
+        "exceeding": "+380 95 678 76523",
+        "less": "+380 95 678 765"
+    },
+    "legalTypeValidData": {
+        "Приватна особа": {
+            "individualTaxpayerNumber": "1234567891"
+        },
+        "ФОП": {
+            "enterpreneurTaxpayerNumber": "1234567891"
+        },
+        "Юридична особа": {
+            "legalEntityType": "ТОВ",
+            "edrpou": "12345678",
+            "legalEntityName": "POG Corporation"
+        }
+    },
+    "myProfileValidData": {
+        "surname": "Барабаш",
+        "name": "Іван",
+        "patronymic": "Олександрович",
+        "city": "Ужгород",
+        "viber": "506743675",
+        "telegram": "tlg_145"
+    }
+}

@@ -1,0 +1,173 @@
+{
+    "menuItem": "Спецтехніка",
+    "subMenu": [
+        {
+            "name": "Будівельна техніка",
+            "url": "/products/budivelna-tekhnika/",
+            "subMenu": [
+                {
+                    "name": "Автокрани",
+                    "url": "/products/avtokrani/"
+                },
+                {
+                    "name": "Бурові установки",
+                    "url": "/products/burovi-ustanovki/"
+                },
+                {
+                    "name": "Дорожньо-будівельна техніка",
+                    "url": "/products/dorozhno-budivelna-tekhnika/"
+                },
+                {
+                    "name": "Екскаватори",
+                    "url": "/products/ekskavatori/"
+                },
+                {
+                    "name": "Інша будівельна спецтехніка",
+                    "url": "/products/insha-budivelna-spetstekhnika/"
+                },
+                {
+                    "name": "Катки",
+                    "url": "/products/katki/"
+                },
+                {
+                    "name": "Контейнери",
+                    "url": "/products/konteineri/"
+                },
+                {
+                    "name": "Навантажувачі",
+                    "url": "/products/navantazhuvachi/"
+                },
+                {
+                    "name": "Обладнання для спецтехніки",
+                    "url": "/products/ustanovki-dlya-burinnia/"
+                },
+                {
+                    "name": "Підйомники",
+                    "url": "/products/pidiomniki/"
+                },
+                {
+                    "name": "Техніка для земляних робіт",
+                    "url": "/products/tekhnika-dlya-zemlianikh-robit/"
+                }
+            ]
+        },
+        {
+            "name": "Комунальна техніка",
+            "url": "/products/komunalna-tekhnika/",
+            "subMenu": [
+                {
+                    "name": "Аварійні машини",
+                    "url": "/products/avariini-mashini/"
+                },
+                {
+                    "name": "Дорожньо-прибиральна техніка",
+                    "url": "/products/dorozhno-pribiralna-tekhnika/"
+                },
+                {
+                    "name": "Клінінгове обладнання",
+                    "url": "/products/kliningove-obladnannia/"
+                },
+                {
+                    "name": "Комунальні контейнери",
+                    "url": "/products/komunalni-konteineri/"
+                },
+                {
+                    "name": "Комунальні машини",
+                    "url": "/products/komunalni-mashini/"
+                },
+                {
+                    "name": "Обладнання для комунальної техніки",
+                    "url": "/products/tekhnika-dlya-skladuvannia/"
+                }
+            ]
+        },
+        {
+            "name": "Сільськогосподарська техніка",
+            "url": "/products/silskogospodarska-tekhnika/",
+            "subMenu": [
+                {
+                    "name": "Ґрунтообробна техніка",
+                    "url": "/products/gruntoobrobna-tekhnika/"
+                },
+                {
+                    "name": "Жатки",
+                    "url": "/products/zhatki/"
+                },
+                {
+                    "name": "Інша сільгосптехніка",
+                    "url": "/products/insha-silgosptekhnika/"
+                },
+                {
+                    "name": "Картопляна техніка",
+                    "url": "/products/kartopliana-tekhnika/"
+                },
+                {
+                    "name": "Комбайни",
+                    "url": "/products/kombaini/"
+                },
+                {
+                    "name": "Лісозаготівельна техніка",
+                    "url": "/products/lisozagotivelna-tekhnika/"
+                },
+                {
+                    "name": "Обладнання",
+                    "url": "/products/obladnannia/"
+                },
+                {
+                    "name": "Післязбиральна техніка",
+                    "url": "/products/pisliazbiralna-tekhnika/"
+                },
+                {
+                    "name": "Посівна та садильна техніка",
+                    "url": "/products/posivna-ta-sadilna-tekhnika/"
+                },
+                {
+                    "name": "Сільськогосподарська нерухомість",
+                    "url": "/products/silskogospodarska-nerukhomist/"
+                },
+                {
+                    "name": "Техніка для внесення добрив",
+                    "url": "/products/tekhnika-dlya-zagotivli-sina/"
+                },
+                {
+                    "name": "Техніка для заготівлі сіна",
+                    "url": "/products/tekhnika-dlya-transportuvannia/"
+                },
+                {
+                    "name": "Техніка для поливу та зрошення",
+                    "url": "/products/tekhnika-dlya-polivu-ta-zroshennia/"
+                },
+                {
+                    "name": "Техніка для саду та городу",
+                    "url": "/products/tekhnika-dlya-tvarinnitstva/"
+                },
+                {
+                    "name": "Техніка для тваринництва",
+                    "url": "/products/obladnannia-dlya-komunalnoyi-tekhniki/"
+                },
+                {
+                    "name": "Техніка для транспортування",
+                    "url": "/products/tekhnika-dlya-sadu-ta-gorodu/"
+                },
+                {
+                    "name": "Трактори",
+                    "url": "/products/traktori/"
+                }
+            ]
+        },
+        {
+            "name": "Складська техніка",
+            "url": "/products/skladska-tekhnika/",
+            "subMenu": [
+                {
+                    "name": "Обладнання для навантажувачів",
+                    "url": "/products/ekskavatori-dlya-znesennia/"
+                },
+                {
+                    "name": "Техніка для складування",
+                    "url": "/products/obladnannia-dlya-navantazhuvachiv/"
+                }
+            ]
+        }
+    ]
+}

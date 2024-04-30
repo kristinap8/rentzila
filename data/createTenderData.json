@@ -1,0 +1,89 @@
+{
+    "fieldsByTab": {
+        "generalInfo": [
+            "tenderName",
+            "serviceName",
+            "endDate",
+            "declaredBudget",
+            "worksLocation",
+            "additionalInfo"
+        ],
+        "documentation": [
+            "fileUpload"
+        ],
+        "contacts": [
+            "surname",
+            "name",
+            "phone"
+        ]
+    },
+    "fieldsErrorClasses": {
+        "tenderName": "inputError",
+        "serviceName": "searchResultError",
+        "startDate": "errorDateWrapper",
+        "endDate": "errorDateWrapper",
+        "declaredBudget": "inputError",
+        "worksLocation": "labelError",
+        "additionalInfo": "textAreaError",
+        "fileUpload": "inputWrapperError",
+        "surname": "inputError",
+        "name": "inputError",
+        "phone": "OperatorForm_error"
+    },
+    "fieldsErrorMsgs": {
+        "tenderName": "Назва має містити щонайменше 10 символів",
+        "serviceName": "Це поле обов’язкове",
+        "serviceDropdown": "На жаль, послугу “<SERVICE_NAME>“ не знайдено в нашій базі.\nВи можете додати послугу в категорію “Користувацькі”:",
+        "endDate": "Це поле обов’язкове",
+        "tenderProposalPeriod": "Період між датами подання пропозицій має бути більшим за добу",
+        "workExecutionPeriod": "Це поле обов’язкове",
+        "declaredBudget": "Це поле обов’язкове",
+        "worksLocation": "Виберіть коректне місце на мапі України",
+        "additionalInfo": "Опис має містити щонайменше 40 символів (0)",
+        "fileUpload": "Додайте до вашого тендеру як мінімум один файл",
+        "surname": "Це поле обов’язкове",
+        "name": "Це поле обов’язкове",
+        "phone": "Це поле обов’язкове"
+    },
+    "validGeneralInfoData": {
+        "tenderName": "test tender",
+        "serviceName": "Прибирання даху",
+        "endDate": "",
+        "workExecutionPeriod": "",
+        "declaredBudget": "899",
+        "worksLocation": "Київ",
+        "additionalInfo": "This tender is classified as a commercial tender, intended for the procurement of goods by Test company"
+    },
+    "invalidTenderNames": [
+        "tender123",
+        "                ",
+        "^;<>{}",
+        "tendertendertendertendertendertendertendertendertendertendertendertend"
+    ],
+    "invalidServiceNames": [
+        "ПрибираннядахуПрибираннядахуПрибираннядахуПрибираннядахуПрибираннядахуПрибираннядахуПрибираннядахyПр",
+        "^;<>{}",
+        "              "
+    ],
+    "nonExistingServiceName": "Service test",
+    "invalidFiles": [
+        "largeImg.png",
+        "tenderFile.txt"
+    ],
+    "validFiles": [
+        "municipalVehicle.png",
+        "municipalVehicle2.jpeg",
+        "municipalVehicle3.png",
+        "municipalVehicle4.png",
+        "municipalVehicle5.jpeg",
+        "municipalVehicle6.jpg"
+    ],
+    "uploadFilePopUpTitle": "Невалідне фото",
+    "uploadFilePopUpErrorMsgs": {
+        "invalidFormatOrLarge": "Формат документа не підтримується, або завеликий розмір файлу. Допустимі формати: jpg, jpeg, png, pdf, doc, docx, xls, xlsx, zip. Ви не можете завантажити файл більше 20 МВ.",
+        "sameFiles": "Ви не можете завантажити двічі один файл.",
+        "maxFilesExceeded": "Ви можете додати максимум 5 файлів до одного тендеру. Або заархівуйте свої документи в zip файл."
+    },
+    "uploadFileErrorMsg": "Додайте до вашого тендеру як мінімум один файл",
+    "uploadFileErrorClass": "inputWrapperError"
+}

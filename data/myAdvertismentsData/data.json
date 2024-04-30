@@ -1,0 +1,58 @@
+{
+    "title": "Мої оголошення",
+    "noUnitsMsgByTabs": {
+        "active": "У Вас поки немає активних оголошень",
+        "deactivated": "У Вас поки немає деактивованих оголошень",
+        "pending": "У Вас поки немає очікуючих оголошень",
+        "declined": "У Вас поки немає відхилених оголошень"
+    },
+    "filterOptions": {
+        "all": "Всі категорії",
+        "otherCategories": [
+            "Будівельна техніка",
+            "Комунальна техніка",
+            "Складська техніка",
+            "Сільськогосподарська техніка"
+        ]
+    },
+    "sortOptions": {
+        "byDate": "по даті створення",
+        "byName": "по назві"
+    },
+    "nonFoundUnitsMg": {
+        "inCategory": "Оголошення в категорії \"{name}\" не знайдені",
+        "byName": "Оголошення за назвою \"{name}\" не знайдені",
+        "empty": {
+            "title": "На жаль, у Вас поки немає поданих оголошень",
+            "desc": "Тут будуть з’являтися Ваші нові оголошення"
+        }
+    },
+    "searchUnitValue": {
+        "empty": "",
+        "spaces": [
+            "  ",
+            "          "
+        ],
+        "exceeding": "testunittestunittestunittestunittestunittestunittestunittestunittestunittestunittestunittestunittestu",
+        "restrictedSymbols": [
+            "<",
+            ">",
+            "^",
+            "{",
+            "}",
+            ";"
+        ],
+        "allowedSymbols": [
+            "!",
+            "@",
+            "#",
+            "$",
+            "%",
+            "(",
+            ")",
+            "*"
+        ],
+        "multipleWords": "Test unit test",
+        "nonExistingName": "Unit1234567890"
+    }
+}

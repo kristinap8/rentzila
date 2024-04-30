@@ -1,0 +1,8 @@
+{
+    "myProfile": "owner-cabinet/",
+    "myTenders": "owner-tenders-page/",
+    "units": "products/",
+    "myAdvertisments": "owner-units-page/",
+    "myFavouriteUnits": "owner-favourite-units/",
+    "createUnit": "create-unit/"
+}

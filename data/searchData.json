@@ -1,0 +1,42 @@
+{
+    "searchDropdownServices": [
+        "Посів технічних та зернових культур",
+        "Обприскування",
+        "Внесення добрив"
+    ],
+    "searchDropdownCategories": [
+        "екскаватори для знесення",
+        "вакуумні екскаватори",
+        "гусеничні екскаватори"
+    ],
+    "searchPhrases1": [
+        "Трактор",
+        "Ремонт гидравлики"
+    ],
+    "searchPhrase2": "Ремонт",
+    "emptySearchPhrase": "        ",
+    "numberSearchPhrase": "123",
+    "specificSymbols": [
+        "!",
+        "@",
+        "#",
+        "$",
+        "%",
+        "(",
+        ")",
+        "*",
+        "[",
+        "]"
+    ],
+    "bannedSpecificSymbols": [
+        "^",
+        "<",
+        ">",
+        ";",
+        "{",
+        "}"
+    ],
+    "nonExistingSearchPhrase": "non-existent тест1234567890",
+    "existingServiceSearchPhrase": "Асфальтування",
+    "existingVehicleSearchPhrase": "Драглайн"
+}

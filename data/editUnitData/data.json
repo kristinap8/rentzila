@@ -1,0 +1,88 @@
+{
+    "title": "Редагування оголошення",
+    "notificationMsg": {
+        "save": "Ваше оголошення успішно змінено та відправлено на модерацію"
+    },
+    "completeEditingTitle": "Вашe оголошення успішно відредаговане",
+    "paymentMethod": {
+        "CASHLESS_PAYMENT_WITHOUT_VAT": "Безготівковий розрахунок (без ПДВ)",
+        "CASH_OR_CARD": "Готівкою / на картку",
+        "CASHLESS_PAYMENT_WITH_VAT": "Безготівковий розрахунок (з ПДВ)"
+    },
+    "fieldErrorMsgs": {
+        "unitName": {
+            "empty": "Це поле обов’язкове",
+            "less": "У назві оголошення повинно бути не менше 10 символів",
+            "exceeding": "У назві оголошення може бути не більше 100 символів"
+        }, 
+        "manufacturer": {
+            "empty": "Це поле обов’язкове",
+            "nonExisting": "На жаль, виробника “{name}“ не знайдено в нашій базі. Щоб додати виробника - зв`яжіться із службою підтримки"
+        },
+        "model": {
+            "empty": "Це поле обов’язкове",
+            "exceeding": "У назві моделі може бути не більше 15 символів"
+        }
+    },
+    "fieldsErrorClasses": {
+        "unitName": "inputError",
+        "manufacturer": "searchResultError",
+        "model": "inputError"
+    },
+    "invalidData": {
+        "unitName": {
+            "notAllowed": [
+                "<",
+                ">",
+                "{",
+                "}",
+                ";",
+                "^"
+            ],
+            "less": "unit87989",
+            "exceeding": "testunittestunittestunittestunittestunittestunittestunittestunittestunittestunittestunittestunittestu"
+        }, 
+        "manufacturer":{
+            "notAllowed": [
+                "<",
+                ">",
+                "{",
+                "}",
+                ";",
+                "^"
+            ],
+            "nonExisting": "Random manufacturer"
+        },
+        "model": {
+            "notAllowed":  [
+                "<",
+                ">",
+                "{",
+                "}",
+                ";",
+                "^"
+            ],
+            "exceeding": "testmodeltestmod"
+        },
+        "technical features": {
+            "notAllowed":  [
+                "<",
+                ">",
+                "{",
+                "}",
+                ";",
+                "^"
+            ]
+        },
+        "description": {
+            "notAllowed":  [
+                "<",
+                ">",
+                "{",
+                "}",
+                ";",
+                "^"
+            ]
+        }      
+    }
+}

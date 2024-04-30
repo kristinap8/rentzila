@@ -1,0 +1,9 @@
+{
+    "nonFoundTendersMsg": "Тендер за назвою \"{name}\" не знайдені",
+    "finishTenderPopupTitle": "Завершення тендеру",
+    "deleteTenderPopupTitle": "Видалення тендеру",
+    "notificationMsg": {
+        "delete": "Ви успішно видалили тендер",
+        "finish": "Ви успішно завершили тендер"
+    }
+}

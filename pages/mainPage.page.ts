@@ -15,63 +15,57 @@ const vehiclesTabs: string = '*[data-testid*="specialEquipment__"]';
 const vehicles: string = 'div[data-testid*="category__"]';
 
 export class MainPage extends Page {
-    constructor(page: Page['page']) {
+    constructor(page: Page['page'], public isMobile: boolean) {
         super(page);
+        this.isMobile = isMobile;
     }
 
     async getPageTitle() {
-        return await super.getElement(pageTitle);
+        return super.getElement(pageTitle);
     }
 
     async getConsultationForm() {
-        return await super.getElement(consultationForm);
+        return super.getElement(consultationForm);
     }
 
     async getFeedbackNameInput() {
-        return await super.getElement(feedbackNameInput);
+        return super.getElement(feedbackNameInput);
     }
 
     async getFeedbackNameErrorMsg() {
-        return await super.getElement(feedbackNameErrorMsg);
+        return super.getElement(feedbackNameErrorMsg);
     }
 
     async getFeedbackPhoneInput() {
-        return await super.getElement(feedbackPhoneInput);
+        return super.getElement(feedbackPhoneInput);
     }
 
     async getFeedbackPhoneErrorMsg() {
-        return await super.getElement(feedbackPhoneErrorMsg);
+        return super.getElement(feedbackPhoneErrorMsg);
     }
 
-    async getServicesTabs() {
-        return await super.getElementsArray(servicesTabs);
+    async getSectionTabs(sectionName: "services" | "vehicles") {
+        const tabs = sectionName === "services" ? servicesTabs : vehiclesTabs;
+        return super.getElementsArray(tabs);
     }
 
-    async getVehiclesTabs() {
-        return await super.getElementsArray(vehiclesTabs);
-    }
-
-    async getSectionItems(sectionName: string) {
+    async getSectionItems(sectionName: 'services' | 'vehicles') {
         switch (sectionName) {
             case 'vehicles':
-                return await super.getElement(vehicles);
-                break;
+                return super.getElement(vehicles);
             case 'services':
-                return await super.getElement(services);
-                break;
+                return super.getElement(services);
             default:
                 throw new Error(`Unsupported section name: ${sectionName}`);
         }
     }
 
-    async getSectionItemCount(sectionName: string) {
+    async getSectionItemCount(sectionName: 'services' | 'vehicles') {
         switch (sectionName) {
             case 'vehicles':
                 return await super.getElementsCount(vehicles);
-                break;
             case 'services':
                 return await super.getElementsCount(services);
-                break;
             default:
                 throw new Error(`Unsupported section name: ${sectionName}`);
         }
@@ -81,32 +75,40 @@ export class MainPage extends Page {
         await super.clickElement(feedbackPhoneInput);
     }
 
-    async clickSectionTab(sectionName: string, index: number) {
+    async clickSectionTab(sectionName: 'services' | 'vehicles', index: number) {
+        let tabs: string;
         switch (sectionName) {
             case 'vehicles':
-                await super.clickElementByIndex(vehiclesTabs, index);
+                tabs = vehiclesTabs;
                 break;
             case 'services':
-                await super.clickElementByIndex(servicesTabs, index);
+                tabs = servicesTabs;
                 break;
             default:
                 throw new Error(`Unsupported section name: ${sectionName}`);
         }
+        this.isMobile ? await super.tapElementByIndex(tabs, index) : await super.clickElementByIndex(tabs, index);
     }
 
-    async clickSectionItem(sectionName: string, index: number) {
+    async clickSectionItem(sectionName: 'vehicles' | 'services', index: number) {
+        let element: string;
         switch (sectionName) {
             case 'vehicles':
-                await super.clickElementByIndex(vehicles, index);
-                await super.pause(1000);
+                element = vehicles;
                 break;
             case 'services':
-                await super.clickElementByIndex(services, index);
-                await super.pause(1000);
+                element = services;
                 break;
             default:
                 throw new Error(`Unsupported section name: ${sectionName}`);
         }
+
+        await (await super.getElementByIndex(element, index)).scrollIntoViewIfNeeded();
+        const responsePromise = super.waitForResponse('/api/units/map-user-coords_2', 200);
+        await Promise.all([
+            responsePromise,
+            this.isMobile ? super.tapElementByIndex(element, index) : super.clickElementByIndex(element, index)
+        ]);
     }
 
     async orderConsultation(options?: { name?: string, phone?: string }) {
@@ -127,7 +129,7 @@ export class MainPage extends Page {
         await super.scrollToElement(consultationForm);
     }
 
-    async scrollToSection(sectionName: string) {
+    async scrollToSection(sectionName: "vehicles" | "services") {
         switch (sectionName) {
             case 'vehicles':
                 await super.scrollToElement(specialEquipmentSection);

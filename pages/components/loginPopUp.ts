@@ -65,7 +65,10 @@ export class LoginPopUp extends Page {
         await super.fillElement(passwordInput, password);
 
         if (action === 'click') {
-            await super.clickElement(loginBtn);
+            await Promise.all([
+                this.page.waitForSelector(loginContainer, {state: 'detached'}),
+                super.clickElement(loginBtn)
+            ])
         } else if (action === 'pressEnter') {
             await super.focus(emailPhoneInput);
             await super.pressEnter();

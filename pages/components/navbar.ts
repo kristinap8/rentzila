@@ -1,5 +1,9 @@
+import { errorMonitor } from 'events';
 import Page from '../page';
 
+const avatarPhoto: string = 'div[class*="NavbarContainer"] img[data-testid="photo"]';
+
+const advertismentsLink: string = 'div[class*="Navbar_navigation"] a[href="/products/"]';
 const logo: string = '*[data-testid="Navbar"] *[data-testid="logo"]';
 const catalogLabel: string = '*[class*="NavbarCatalog_label"]';
 const catalogDropdownMenu: string = '*[class*="Catalog_container"]';
@@ -23,53 +27,71 @@ const logoutDropdownItem: string = 'div[data-testid="logout"]';
 const myProfileDropdownItem: string = 'div[data-testid="profile"]';
 const advertismentsDropdownItem: string = 'div[data-testid="units"]';
 
+const notificationPopUpTitle: string = 'div[class*="NotificationLikePopup_description"]';
+
+//mobile navbar elements
+const mobileNavbarIcons = (iconName: string): string => `//*[contains(@class,"MobileNavbar_item")]//*[text()="${iconName}"]`;
+
 export class NavBar extends Page {
-    constructor(page: Page['page']) {
+    constructor(page: Page['page'], public isMobile: boolean) {
         super(page);
+        this.isMobile = isMobile;
+    }
+
+    getNotificationPopUpTitle() {
+        return super.getElement(notificationPopUpTitle);
+    }
+
+    getAdvertismentsLink() {
+        return super.getElement(advertismentsLink);
+    }
+
+    async getAvatarPhotoSrc() {
+        return await super.getElementAttribute(avatarPhoto, 'src');
     }
 
     async getLogo() {
-        return await super.getElement(logo);
+        return super.getElement(logo);
     }
 
     async getCatalogLabel() {
-        return await super.getElement(catalogLabel);
+        return super.getElement(catalogLabel);
     }
 
     async getCatalogDropdownMenu() {
-        return await super.getElement(catalogDropdownMenu);
+        return super.getElement(catalogDropdownMenu);
     }
 
     async getCatalogElementByText(text: string) {
-        return await this.getElementByLocatorAndText(catalogDropdownMenu, text);
+        return this.getElementByLocatorAndText(catalogDropdownMenu, text);
     }
 
     async getAdvertismentsSearchInput() {
-        return await super.getElement(searchInput);
+        return super.getElement(searchInput);
     }
 
     async getTendersJobRequestsSearchInput() {
-        return await super.getElement(tendersJobRequestsSearchInput);
+        return super.getElement(tendersJobRequestsSearchInput);
     }
 
     async getSearchDropdown() {
-        return await super.getElement(searchDropdown);
+        return super.getElement(searchDropdown);
     }
 
     async getSearchHistoryPopup() {
-        return await super.getElement(searchHistoryPopup);
+        return super.getElement(searchHistoryPopup);
     }
 
     async getSearchDropdownServices() {
-        return await super.getElement(searchDropdownServices);
+        return super.getElement(searchDropdownServices);
     }
 
     async getSearchDropdownCategories() {
-        return await super.getElement(searchDropdownCategories);
+        return super.getElement(searchDropdownCategories);
     }
 
     async getSearchHistoryElements() {
-        return await super.getElement(searchHistoryElements);
+        return super.getElement(searchHistoryElements);
     }
 
     async getLastSearchHistoryElement() {
@@ -98,15 +120,15 @@ export class NavBar extends Page {
     }
 
     async getAvatarIcon() {
-        return await super.getElement(avatarIcon);
+        return super.getElement(avatarIcon);
     }
 
     async getProfileDropdownContainer() {
-        return await super.getElement(profileDropdownContainer);
+        return super.getElement(profileDropdownContainer);
     }
 
     async getProfileEmail() {
-        return await super.getElement(profileEmail);
+        return super.getElement(profileEmail);
     }
 
     async hoverCatalogElementByLevelAndInd(level: number, ind: number) {
@@ -127,6 +149,10 @@ export class NavBar extends Page {
         }
 
         await super.hoverElementByIndex(subMenuElements, ind);
+    }
+
+    async waitForLoggedIn() {
+        await super.waitForSelector(avatarIcon);
     }
 
     async clickLoginBtn() {
@@ -167,8 +193,10 @@ export class NavBar extends Page {
     }
 
     async clickLogo() {
-        await super.clickElement(logo);
-        await super.pause(1000);
+        await Promise.all([
+            super.waitForLoadState('load'),
+            await super.clickElement(logo)
+        ]);
     }
 
     async clickSearchInput() {
@@ -191,16 +219,46 @@ export class NavBar extends Page {
         await super.clickElement(myProfileDropdownItem);
     }
 
+    async clickProfileDropdownItem(itemName: 'advertisments') {
+        switch (itemName) {
+            case 'advertisments':
+                await super.clickElement(advertismentsDropdownItem);
+                break;
+            default:
+                throw new Error('Non valid item name');
+                break;
+        }
+    }
     async clickAdvertismentsDropdownItem() {
-        await super.clickElement(advertismentsDropdownItem);
+
     }
 
     async fillSearchInput(searchPhrase: string) {
-        await super.fillElement(searchInput, searchPhrase);
+        await Promise.all([
+            super.waitForLoadState('networkidle'),
+            super.fillElement(searchInput, searchPhrase)
+        ])
     }
 
-    async searchItem(searchPhrase: string) {
-        await this.fillSearchInput(searchPhrase);
-        await super.pressEnter();
+    async clickMobileNavBarIcon(iconName: 'Головна') {
+        this.isMobile && super.tapElement(mobileNavbarIcons(iconName));
+    }
+
+    // async searchItem(searchPhrase: string) {
+    //     await Promise.all([
+    //     this.fillSearchInput(searchPhrase),
+    //     super.pause(5000),
+    //     super.pressEnter()
+    //     ]);
+    // }
+    //    async searchItem(searchPhrase: string) {
+    //     await Promise.all([
+    //         super.fillElement(searchInput, searchPhrase),
+    //         super.clickElement(searchResults)
+    //     ]);
+    //    }
+
+    async clickAdvertismentsLink() {
+        await super.clickElement(advertismentsLink);
     }
 }

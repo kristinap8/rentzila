@@ -1,0 +1,39 @@
+{
+    "title": "Обрані оголошення",
+    "heartColor": "rgb(247, 56, 89)",
+    "sortOptions": {
+        "byDate": "по даті створення",
+        "byName": "по назві"
+    },
+    "filterOptions": {
+        "all": "Всі категорії",
+        "otherCategories": [
+            "Будівельна техніка",
+            "Комунальна техніка",
+            "Складська техніка",
+            "Сільськогосподарська техніка"
+        ]
+    },
+    "nonFoundUnitsMg": {
+        "inCategory": "Оголошення в категорії \"{name}\" не знайдені",
+        "byName": "Оголошення за назвою \"{name}\" не знайдені",
+        "empty": "У Вас поки немає обраних оголошень"
+    },
+    "searchUnitValue": {
+        "empty": "",
+        "spaces": [
+            " ",
+            "  ",
+            "          "
+        ],
+        "number": "16",
+        "restrictedSymbols": [
+            "<",
+            ">",
+            "^"
+        ],
+        "allowedSymbols": [ "!", "@", "#", "$", "%", "(", ")", "*"],
+        "nonExistingName": "тест1234567890"
+    },
+    "clearFavouriteUnitsPopUpTitle": "Очистити список обраних оголошень?"
+}
