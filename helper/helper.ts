@@ -25,8 +25,11 @@ export default class Helper {
         return name.substring(startPos, partialLength);
     }
 
-
     capitalizeAndTrim(input: string) {
         return input.trim().charAt(0).toUpperCase() + input.trim().slice(1);
+    }
+
+    removeSpaces(input: string) {
+        return input.replace(/\s+/g, '');
     }
 }
