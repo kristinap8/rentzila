@@ -1,0 +1,38 @@
+{
+    "emailPhoneInputErrorMsgs": {
+        "empty": "Поле не може бути порожнім",
+        "invalidFormat": "Неправильний формат email або номера телефону"
+    },
+    "passwordInputErrorMsgs": {
+        "empty": "Поле не може бути порожнім",
+        "invalidFormat": "Пароль повинен містити як мінімум 1 цифру, 1 велику літеру і 1 малу літеру, також не повинен містити кирилицю та пробіли"
+    },
+    "loginFormErrorMsgs": {
+        "invalidCredentials": "Невірний e-mail або пароль"
+    },
+    "fieldsErrorClasses": {
+        "emailPhone": "error_input",
+        "password": "error_input"
+    }, 
+    "invalidEmails": [
+        "testuser rentzila@gmail.com",
+        "еуіегіуккутеяшдф",
+        "testuserrentzilagmail.com",
+        "testuserrentzila@gmailcom",
+        "testuserrentzila@gmail",
+        "testuserrentzila@.com",
+        "testuserrentzila",
+        "testuserrentzila@@gmail.com",
+        "  testuserrentzila@gmail.com",
+        "testuserrentzila@gmail.com  "
+    ],
+    "nonExistingEmail": "testuserrentzila99@gmail.com",
+    "invalidPasswords": [
+        "Testuser10  ",
+        "  Testuser10",
+        "testuser10",
+        "TESTUSER10",
+        "Еуіегіук10"
+    ],
+    "nonExistingPassword": "Testuser13"
+}
