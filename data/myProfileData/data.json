@@ -21,7 +21,7 @@
         "city": "inputError",
         "phoneNumber": "error"
     },
-    "fieldsErrorMsgs": {
+    "fieldsMsgs": {
         "individualTaxpayerNumber": {
             "less": "Код ІПН не може бути коротше 10 символів"
         },
@@ -55,7 +55,8 @@
         },
         "phoneNumber": {
             "invalid": "Некоректний номер телефону",
-            "notVerified": "Спочатку верифікуйте номер телефону"
+            "notVerified": "Спочатку верифікуйте номер телефону",
+            "verified": "Успішно верифіковано"
         }
     },
     "invalidIndividualTaxpayerNumber": {
