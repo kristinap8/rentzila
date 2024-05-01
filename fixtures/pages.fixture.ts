@@ -1,7 +1,7 @@
 import { test as base } from '@playwright/test';
 import { MyProfile } from '../pages/myProfile.page';
 import { LoginPopUp } from '../pages/components/loginPopUp';
-import { MyProfileSideMenu } from '../pages/components/myProfileSideMenu';
+import { OwnCabinetLeftSideMenu } from '../pages/components/ownCabinetLeftSideMenu';
 import { NavBar } from '../pages/components/navbar';
 import { MapPopUp } from '../pages/components/mapPopUp';
 import { TelegramPopUp } from '../pages/components/telegramPopUp';
@@ -22,7 +22,7 @@ import { MainPage } from '../pages/mainPage.page';
 export type pages = {
     myProfile: MyProfile
     loginPopUp: LoginPopUp
-    myProfileSideMenu: MyProfileSideMenu
+    ownCabinetLeftSideMenu: OwnCabinetLeftSideMenu
     navBar: NavBar
     mapPopUp: MapPopUp
     telegramPopUp: TelegramPopUp
@@ -48,8 +48,8 @@ const testPages = base.extend<pages>({
     loginPopUp: async ({ page }, use) => {
         await use(new LoginPopUp(page));
     },
-    myProfileSideMenu: async ({ page }, use) => {
-        await use(new MyProfileSideMenu(page));
+    ownCabinetLeftSideMenu: async ({ page }, use) => {
+        await use(new OwnCabinetLeftSideMenu(page));
     },
     navBar: async ({ page, isMobile }, use) => {
         await use(new NavBar(page, isMobile));
