@@ -3,7 +3,7 @@ import { test, expect, pages, testData, helpers } from "../../fixtures/fixture";
 const sectionItemsNumber = 7;
 
 async function checkSection(mainPage: pages["mainPage"], navBar: pages["navBar"], unitsPage: pages["unitsPage"], unitDetailsPage: pages["unitDetailsPage"], helper: helpers["helper"], endpoints: testData["endpointsData"], sectionName: "services" | "vehicles", data: testData["servicesData"] | testData["vehiclesData"]) {
-    let tabs = await mainPage.getSectionTabs(sectionName);
+    let tabs = await mainPage.getSectionTabsArray(sectionName);
 
     for (let i = 0; i < tabs.length; i++) {
         await mainPage.scrollToSection(sectionName);
@@ -29,13 +29,13 @@ async function checkSection(mainPage: pages["mainPage"], navBar: pages["navBar"]
             if (unitCards.length > 0) {
                 await unitsPage.clickFirstUnitCard();
                 if (sectionName === 'services') {
-                    await expect(unitDetailsPage.getServices()).toContainText([data[i]["services"][j]]);
+                    await expect(unitDetailsPage.getUnitInfo('services')).toContainText([data[i]["services"][j]]);
                 } else {
                     let category = helper.capitalizeAndTrim((await unitDetailsPage.getCategoryText())!);
                     expect(data[i]["equipment"][j].categories).toContainEqual(category);
                 }
             }
-            await navBar.clickLogo();
+            await navBar.clickNavbarItem('logo');
             await mainPage.scrollToSection(sectionName);
             await mainPage.clickSectionTab(sectionName, i);
         }
