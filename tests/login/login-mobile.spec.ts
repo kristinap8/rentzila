@@ -17,19 +17,19 @@ async function verifyLoginFormFieldWithoutError(loginPopUp: pages["loginPopUp"],
 }
 
 async function verifyLoggedIn(navBar: pages["navBar"], ownCabinetLeftSideMenu: pages["ownCabinetLeftSideMenu"], myProfile: pages["myProfile"], helper: helpers["helper"], loggedInEmail: string = '', loggedInPhoneNumber: string = '') {
-    await navBar.clickMobileNavBarIcon('Профіль');
+    await navBar.clickMobileNavbarIcon('Профіль');
     await ownCabinetLeftSideMenu.clickMenuBtn('myProfile');
     (loggedInEmail) && expect(await myProfile.getMyProfileInputValue('email')).toEqual(loggedInEmail);
     (loggedInPhoneNumber) && expect(helper.removeSpaces(await myProfile.getMyProfileInputValue('phoneNumber'))).toEqual(loggedInPhoneNumber);
 }
 
 async function openLoginPopUp(navBar: pages['navBar'], loginPopUp: pages['loginPopUp']) {
-    await navBar.clickMobileNavBarIcon('Профіль');
+    await navBar.clickMobileNavbarIcon('Профіль');
     await expect(loginPopUp.getLoginContainer()).toBeVisible();
 }
 
 async function logout(navBar: pages["navBar"], ownCabinetLeftSideMenu: pages["ownCabinetLeftSideMenu"]) {
-    await navBar.clickMobileNavBarIcon('Профіль');
+    await navBar.clickMobileNavbarIcon('Профіль');
     await ownCabinetLeftSideMenu.clickMenuBtn('logout');
 }
 
@@ -95,7 +95,7 @@ test.describe('Login functionality check', () => {
         }
     });
 
-    test('C576 Mobile - Authorization with invalid email', async ({ loginPopUp, navBar, loginFormData }) => {
+    test('C576 Mobile - Authorization with invalid email', async ({ loginPopUp, loginFormData }) => {
         for (let invalidEmail of loginFormData.invalidEmails) {
             for (let action of actions) {
                 await loginPopUp.login({ emailPhone: invalidEmail, password: userLoginCredentials.password, action: 'noClick' });
@@ -113,7 +113,7 @@ test.describe('Login functionality check', () => {
         }
     });
 
-    test('C577 Mobile - Authorization with invalid password', async ({ loginPopUp, navBar, loginFormData }) => {
+    test('C577 Mobile - Authorization with invalid password', async ({ loginPopUp, loginFormData }) => {
         for (let invalidPassword of loginFormData.invalidPasswords) {
             for (let action of actions) {
                 await loginPopUp.login({ emailPhone: userLoginCredentials.email, password: invalidPassword, action: 'noClick' });

@@ -8,7 +8,7 @@ const userLoginCredentials = {
 const actions: ('click' | 'pressEnter')[] = ['click', 'pressEnter'];
 
 async function verifyNotLoggedIn(navBar: pages["navBar"], loginPopUp: pages["loginPopUp"]) {
-    await expect(navBar.getLogInBtn()).toBeVisible();
+    await expect(navBar.getNavBarItem('loginBtn')).toBeVisible();
     await expect(loginPopUp.getLoginContainer()).toBeVisible();
 }
 
@@ -22,8 +22,8 @@ async function verifyLoginFormFieldWithoutError(loginPopUp: pages["loginPopUp"],
 }
 
 async function verifyLoggedIn(navBar: pages["navBar"], loggedInEmail: string) {
-    await expect(navBar.getAvatarIcon()).toBeVisible();
-    await navBar.clickAvatarIcon();
+    await expect(navBar.getNavBarItem('avatarIcon')).toBeVisible();
+    await navBar.clickNavbarItem('avatarIcon');
     await expect(navBar.getProfileDropdown()).toBeVisible();
     await expect(navBar.getProfileDropdownEmail()).toHaveText(loggedInEmail);
 }
@@ -32,7 +32,7 @@ test.describe('Login functionality check', () => {
     test.beforeEach(async ({ navBar, loginPopUp, telegramPopUp }) => {
         await telegramPopUp.closeTelegramPopUp();
         await navBar.openUrl();
-        await navBar.clickLoginBtn();
+        await navBar.clickNavbarItem('loginBtn');
         await expect(loginPopUp.getLoginContainer()).toBeVisible();
     });
 
@@ -71,7 +71,7 @@ test.describe('Login functionality check', () => {
                 await loginPopUp.login({ action });
                 await verifyLoggedIn(navBar, validEmails[0]);
                 await navBar.clickProfileDropdownBtn('logout');
-                await navBar.clickLoginBtn();
+                await navBar.clickNavbarItem('loginBtn');
             }
         }
     });
@@ -89,8 +89,8 @@ test.describe('Login functionality check', () => {
             expect(helper.removeSpaces(await myProfile.getMyProfileInputValue('phoneNumber'))).toEqual(phoneNumber);
             await expect(myProfile.getPhoneVerificationMsg()).toHaveText(myProfileData["fieldsMsgs"]['phoneNumber']["verified"]);
 
-            await ownCabinetLeftSideMenu.clickBtn('logout');
-            await navBar.clickLoginBtn();
+            await ownCabinetLeftSideMenu.clickMenuBtn('logout');
+            await navBar.clickNavbarItem('loginBtn');
         }
     });
 
