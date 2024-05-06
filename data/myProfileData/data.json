@@ -1,25 +1,31 @@
 {
     "invalidProfilePhotos": {
-        "invalidFormat": "invalidProfilePhoto.txt",
+        "invalidFormat": "invalidFormatProfilePhoto.txt",
         "largeSize": "largeProfilePhoto.jpg"
     },
-    "validProfilePhoto": "validProfilePhoto.jpg",
-    "defaultProfilePhoto": "defaultProfilePhoto.jpg",
     "invalidPhotoPopUpTitle": "Невалідне фото",
     "invalidPhotoPopUpErrorMsgs": {
         "invalidFormat": "Формат зображення не підтримується. Допустимі формати: .jpg, .jpeg, .png.",
         "largeSize": "Занадто великий розмір файлу. Розмір файлу не повинен перевищувати 5 мб."
+    },
+    "validProfilePhoto": "validProfilePhoto.jpg",
+    "defaultProfilePhoto": "defaultProfilePhoto.jpg",
+    "personTypes": {
+        "private individual": "Приватна особа",
+        "individual entrepreneur": "ФОП",
+        "legal entity": "Юридична особа"
     },
     "fieldsErrorClasses": {
         "individualTaxpayerNumber": "inputError",
         "enterpreneurTaxpayerNumber": "inputError",
         "edrpou": "inputError",
         "legalEntityName": "inputError",
-        "surname":  "inputError",
+        "surname": "inputError",
         "name": "inputError",
         "patronymic": "inputError",
         "city": "inputError",
-        "phoneNumber": "error"
+        "phoneNumber": "error",
+        "viber": "error"
     },
     "fieldsMsgs": {
         "individualTaxpayerNumber": {
@@ -54,9 +60,21 @@
             "invalid": "Некоректно введена назва населеного пункту"
         },
         "phoneNumber": {
+            "less": "Некоректний номер телефону",
             "invalid": "Некоректний номер телефону",
             "notVerified": "Спочатку верифікуйте номер телефону",
             "verified": "Успішно верифіковано"
+        },
+        "viber": {
+            "less": "Некоректний номер телефону",
+            "invalid": "Некоректний номер телефону"
+        },
+        "telegram": {
+            "invalidFormat": "Вкажіть ваш номер телефону у форматі \"+380931234567\" або нік у Telegram без \"@\" на початку",
+            "invalidUsername": "Некоректне ім'я користувача",
+            "invalidPhoneNumber": "Некоректний номер телефону",
+            "lessUsername": "Поле повинно містити не менше 4 символів",
+            "lessPhoneNumber": "Некоректний номер телефону"
         }
     },
     "invalidIndividualTaxpayerNumber": {
@@ -65,35 +83,47 @@
             "!@#$%",
             "          "
         ],
-        "exceeding": "12345678910",
+        "exceeding": {
+            "data": "12345678910",
+            "allowedLength": 10
+        },
         "less": "123456789"
     },
-    "enterpreneurTaxpayerNumber": {
+    "invalidEnterpreneurTaxpayerNumber": {
         "notAccepted": [
             "abcghrertlg",
             "!@#$%",
             "          "
         ],
-        "exceeding": "12345678910",
+        "exceeding": {
+            "data": "12345678910",
+            "allowedLength": 10
+        },
         "less": "123456789"
     },
-    "edrpou": {
+    "invalidEdrpou": {
         "notAccepted": [
             "abcfghrt",
             "@#$?><",
             "        "
         ],
-        "exceeding": "123456789",
+        "exceeding": {
+            "data": "123456789",
+            "allowedLength": 8
+        },
         "less": "1234567"
     },
-    "legalEntityName": {
+    "invalidLegalEntityName": {
         "notAccepted": [
             "             ",
             "^;<>{}"
         ],
-        "exceeding": "legalentitylegalentitylega"
+        "exceeding": {
+            "data": "legalentitylegalentitylega",
+            "allowedLength": 25
+        }
     },
-    "surname": {
+    "invalidSurname": {
         "notAccepted": [
             "    ",
             "^;<>{}"
@@ -102,10 +132,13 @@
             "S1u2r3n4a5m6e7",
             "S!u@r#n#a%m*e("
         ],
-        "exceeding": "Surnamesurnamesurnamesurna",
+        "exceeding": {
+            "data": "Surnamesurnamesurnamesurna",
+            "allowedLength": 25
+        },
         "less": "S"
     },
-    "name": {
+    "invalidName": {
         "notAccepted": [
             "    ",
             "^;<>{}"
@@ -114,10 +147,13 @@
             "N1a2m3e4",
             "N@a#m%e_"
         ],
-        "exceeding": "Namenamenamenamenamenamena",
+        "exceeding": {
+            "data": "Namenamenamenamenamenamena",
+            "allowedLength": 25
+        },
         "less": "N"
     },
-    "patronymic": {
+    "invalidPatronymic": {
         "notAccepted": [
             "    ",
             "^;<>{}"
@@ -126,10 +162,13 @@
             "P1a2t3r4o5n6y7m8i9c",
             "P#a_t-r@o!n!ym%i&c*"
         ],
-        "exceeding": "Patronymicpatronymicpatron",
+        "exceeding": {
+            "data": "Patronymicpatronymicpatron",
+            "allowedLength": 25
+        },
         "less": "P"
     },
-    "city": {
+    "invalidCity": {
         "notAccepted": [
             "       ",
             "^;<>{}"
@@ -138,40 +177,71 @@
             "Прага",
             "Aбвг"
         ],
-        "exceeding": "Citycitycitycitycitycitycitycit"
+        "exceeding": {
+            "data": "Citycitycitycitycitycitycitycit",
+            "allowedLength": 30
+        }
     },
-    "phoneNumber": {
+    "invalidPhoneNumber": {
         "notAccepted": [
             "abcghtci",
             "@#\"{}>()",
             "       "
         ],
         "invalid": [
+            "+44 7488 855303",
+            "+380 117865456"
+        ],
+        "exceeding": {
+            "data": "+380 95 678 76523",
+            "allowedLength": 16
+        },
+        "less": "+380 95 678 765"
+    },
+    "invalidViber": {
+        "notAccepted": [
+            "               ",
+            "abcghtci",
+            "@#\"{}>()"
+        ],
+        "invalid": [
+            "+44 7488 855303",
+            "+380 117865456"
+        ],
+        "less": "+380 95 676 767",
+        "exceeding": {
+            "data": "+380 95 676 76798",
+            "allowedLength": 16
+        }
+    },
+    "invalidTelegram": {
+        "exceeding": [
+            {
+                "data": "abcghfhfhfgjrrttldpemrmrmnbngng",
+                "allowedLength": 30
+            },
+            {
+                "data": "+3809598765734",
+                "allowedLength": 13
+            }
+        ],
+        "invalidFormat": [
+            "@tg123r",
+            "12tlg",
+            "380956758650"
+        ],
+        "notAccepted": [
+            "^;<>{}",
+            "         "
+        ],
+        "invalidUsername": "$%#!",
+        "invalidPhoneNumber": [
             "+447488855303",
             "+380117865456"
         ],
-        "exceeding": "+380 95 678 76523",
-        "less": "+380 95 678 765"
+        "usernameLess": "tlg",
+        "phoneNumberLess": "+38095987657"
     },
-    "legalTypeValidData": {
-        "Приватна особа": {
-            "individualTaxpayerNumber": "1234567891"
-        },
-        "ФОП": {
-            "enterpreneurTaxpayerNumber": "1234567891"
-        },
-        "Юридична особа": {
-            "legalEntityType": "ТОВ",
-            "edrpou": "12345678",
-            "legalEntityName": "POG Corporation"
-        }
-    },
-    "myProfileValidData": {
-        "surname": "Барабаш",
-        "name": "Іван",
-        "patronymic": "Олександрович",
-        "city": "Ужгород",
-        "viber": "506743675",
-        "telegram": "tlg_145"
-    }
+    "verifyPhoneLabel": "Верифікувати номер телефону за допомогою:",
+    "telegramBotLink": "https://t.me/letka_lq_bot"
 }
