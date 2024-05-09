@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { test, expect, pages, testData } from '../fixtures/fixture';
 
 const photosDirName = 'data/createTenderData';
@@ -25,29 +26,33 @@ const fieldsByTab = {
 //     }
 // }
 
-async function verifyFieldError(generalInfoTab: pages['generalInfoTab'], createTenderData: testData['createTenderData'], fieldName: 'tenderName' | 'serviceName', errorType: 'less') {
-    await expect(generalInfoTab.getGeneralInfoInput(fieldName)).toHaveClass(RegExp(createTenderData.fieldsErrorClasses[fieldName]));
+async function verifyFieldError(generalInfoTab: pages['generalInfoTab'], createTenderData: testData['createTenderData'], fieldName: 'tenderName' | 'serviceName' | 'endDate' | 'tenderProposalPeriod' | 'workExecutionPeriod', errorType: 'less' | 'invalid') {
+    let fields: ("tenderName" | "serviceName" | "startDate" | "endDate" | 'workExecutionPeriod')[] = (fieldName === 'tenderProposalPeriod') ? ['startDate', 'endDate'] : [fieldName];
+    for (let field of fields) {
+        await expect(generalInfoTab.getGeneralInfoInput(field)).toHaveClass(RegExp(createTenderData.fieldsErrorClasses[fieldName]));
+    }
     await expect(generalInfoTab.getGeneralInfoInputErrorMsg(fieldName)).toHaveText(createTenderData.fieldsErrorMsgs[fieldName][errorType]);
 }
 
-async function fillAndVerifyFieldError(createTender: pages['createTender'], generalInfoTab: pages["generalInfoTab"], createTenderData: testData['createTenderData'], fieldName: 'tenderName', data: string, errorType: 'less', clickNextBtn: boolean = true) {
-    await generalInfoTab.clearGeneralInfoInput(fieldName);
-    await generalInfoTab.fillGeneralInfoInput(fieldName, data);
-    await expect(generalInfoTab.getGeneralInfoInput(fieldName)).toHaveValue(data);
+async function fillAndVerifyFieldError(createTender: pages['createTender'], generalInfoTab: pages["generalInfoTab"], createTenderData: testData['createTenderData'], fieldName: 'tenderName' | 'tenderProposalPeriod' | 'workExecutionPeriod', data: string | Date, errorType: 'less' | 'invalid', clickNextBtn: boolean = true) {
+    const field = (fieldName === 'tenderProposalPeriod') ? 'endDate' : fieldName;
+    (field !== 'endDate' && field !== 'workExecutionPeriod') && await generalInfoTab.clearGeneralInfoInput(field);
+    await generalInfoTab.fillGeneralInfoInput(field, data);
+    await expect(generalInfoTab.getGeneralInfoInput(field)).toHaveValue((data instanceof Date) ? DateTime.fromJSDate(data, { zone: 'utc' }).toFormat('dd.MM.yyyy, H:mm') : data);
     if (clickNextBtn) {
         await createTender.clickNextBtn();
-        await expect(generalInfoTab.getGeneralInfoInput(fieldName)).toBeInViewport();
+        await expect(generalInfoTab.getGeneralInfoInput(field)).toBeInViewport();
     }
     await verifyFieldError(generalInfoTab, createTenderData, fieldName, errorType);
 }
 
-async function fillAndCheckIfEmpty(generalInfoTab: pages["generalInfoTab"], fieldName: 'tenderName' | 'serviceName', data: string) {
+async function fillAndCheckIfEmpty(generalInfoTab: pages["generalInfoTab"], fieldName: 'tenderName' | 'serviceName' | 'declaredBudget', data: string) {
     await generalInfoTab.clearGeneralInfoInput(fieldName);
     await generalInfoTab.fillGeneralInfoInput(fieldName, data);
     await expect(generalInfoTab.getGeneralInfoInput(fieldName)).toHaveValue('');
 }
 
-async function fillAndCheckEnteredLength(generalInfoTab: pages["generalInfoTab"], fieldName: 'tenderName' | 'serviceName', data: string, maxLength: number) {
+async function fillAndCheckEnteredLength(generalInfoTab: pages["generalInfoTab"], fieldName: 'tenderName' | 'serviceName' | 'declaredBudget', data: string, maxLength: number) {
     await generalInfoTab.clearGeneralInfoInput(fieldName);
     await generalInfoTab.fillGeneralInfoInput(fieldName, data);
     await expect(generalInfoTab.getGeneralInfoInput(fieldName)).toHaveValue(data.slice(0, maxLength));
@@ -135,11 +140,39 @@ test.describe('Create tender functionality check', () => {
         await apiHelper.deleteServiceByName(serviceName);
     });
 
-    test("TC021 - Create tender with invalid tender proposal submission period", async ({ generalInfoTab, dataGenerator }) => {
+    test("TC021 - Create tender with invalid tender proposal submission period", async ({ createTender, generalInfoTab, createTenderData, dataGenerator, helper }) => {
         const fieldToCheck = 'endDate';
         await generalInfoTab.fillGeneralInfoWithRndData(dataGenerator, fieldToCheck);
 
-        
+        const invalidEndDate = helper.addHoursToDate(await generalInfoTab.getGeneralInfoInputValue('startDate'), createTenderData.invalidEndDate.hoursDifference, true);
+        await fillAndVerifyFieldError(createTender, generalInfoTab, createTenderData, 'tenderProposalPeriod', invalidEndDate, 'invalid');
+    });
+
+    test("TC022 - Create tender with invalid work execution period", async ({ createTender, createTenderData, generalInfoTab, dataGenerator, helper }) => {
+        const fieldToCheck = 'workExecutionPeriod';
+        await generalInfoTab.fillGeneralInfoWithRndData(dataGenerator, fieldToCheck);
+
+        let endDate = await generalInfoTab.getGeneralInfoInputValue('endDate');
+        let startWorkExecutionDate = helper.addDaysToDate(endDate, dataGenerator!.generateDaysDifference(2), true);
+        await generalInfoTab.fillGeneralInfoInput('workExecutionPeriod', [startWorkExecutionDate, undefined]);
+        await createTender.clickNextBtn();
+        await expect(generalInfoTab.getGeneralInfoInput(fieldToCheck)).toBeInViewport();
+        await verifyFieldError(generalInfoTab, createTenderData, fieldToCheck, 'invalid');
+        await expect(generalInfoTab.getGeneralInfoInput(fieldToCheck)).toHaveValue(`${DateTime.fromJSDate(startWorkExecutionDate, { zone: 'utc' }).toFormat('dd.MM.yyyy')} - `);
+
+        let endWorkExecutionDate = helper.subtractDaysFromDate(startWorkExecutionDate, 1, true, false);
+        await generalInfoTab.fillGeneralInfoInput('workExecutionPeriod', [undefined, endWorkExecutionDate]);
+        await expect(generalInfoTab.getGeneralInfoInput(fieldToCheck)).toHaveValue(`${DateTime.fromJSDate(endWorkExecutionDate, { zone: 'utc' }).toFormat('dd.MM.yyyy')} - `);
+    });
+
+    test("TC023 - Create tender with invalid declared budget", async ({ generalInfoTab, dataGenerator, createTenderData }) => {
+        const fieldToCheck = 'declaredBudget';
+        await generalInfoTab.fillGeneralInfoWithRndData(dataGenerator, fieldToCheck);
+
+        for (let invalidDeclaredBudget of createTenderData.invalidDeclaredBudget.notAccepted) {
+            await fillAndCheckIfEmpty(generalInfoTab, fieldToCheck, invalidDeclaredBudget);
+        }
+        await fillAndCheckEnteredLength(generalInfoTab, fieldToCheck, createTenderData.invalidDeclaredBudget.exceeding.data, createTenderData.invalidDeclaredBudget.exceeding.allowedLength);
     })
     //     await generalInfo.fillGeneralInfoExcept('tenderName');
 
