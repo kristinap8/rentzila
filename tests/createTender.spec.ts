@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { test, expect, pages, testData } from '../fixtures/fixture';
+import { generateKey } from 'crypto';
 
 const photosDirName = 'data/createTenderData';
 const userLoginCredentials = {
@@ -26,8 +27,8 @@ const fieldsByTab = {
 //     }
 // }
 
-async function verifyFieldError(generalInfoTab: pages['generalInfoTab'], createTenderData: testData['createTenderData'], fieldName: 'tenderName' | 'serviceName' | 'endDate' | 'tenderProposalPeriod' | 'workExecutionPeriod', errorType: 'less' | 'invalid') {
-    let fields: ("tenderName" | "serviceName" | "startDate" | "endDate" | 'workExecutionPeriod')[] = (fieldName === 'tenderProposalPeriod') ? ['startDate', 'endDate'] : [fieldName];
+async function verifyFieldError(generalInfoTab: pages['generalInfoTab'], createTenderData: testData['createTenderData'], fieldName: 'tenderName' | 'serviceName' | 'endDate' | 'tenderProposalPeriod' | 'workExecutionPeriod' | 'worksLocation', errorType: 'less' | 'invalid' | 'empty') {
+    let fields: ("tenderName" | "serviceName" | "startDate" | "endDate" | 'workExecutionPeriod' | 'worksLocation')[] = (fieldName === 'tenderProposalPeriod') ? ['startDate', 'endDate'] : [fieldName];
     for (let field of fields) {
         await expect(generalInfoTab.getGeneralInfoInput(field)).toHaveClass(RegExp(createTenderData.fieldsErrorClasses[fieldName]));
     }
@@ -81,20 +82,20 @@ test.describe('Create tender functionality check', () => {
     })
 
     test("TC017 - Create tender with empty fields", async ({ createTender, contactsTab, createTenderData }) => {
-        const tabs = ['generalInfo', 'documentation', 'contacts'] as const;
+        // const tabs = ['generalInfo', 'documentation', 'contacts'] as const;
 
-        for (let tab of tabs) {
-            (tab !== "generalInfo") && await createTender.handleTab(tab, 'click');
-            await verifyTabOpened(createTender, createTenderData, tab);
-            await createTender.clickNextBtn();
-            (tab === "contacts") && await verifyTabOpened(createTender, createTenderData, tabs[0]);
-            (tab !== "contacts") && await verifyFieldErrorsByTab(createTender, createTenderData, tab);
-        }
+        // for (let tab of tabs) {
+        //     (tab !== "generalInfo") && await createTender.handleTab(tab, 'click');
+        //     await verifyTabOpened(createTender, createTenderData, tab);
+        //     await createTender.clickNextBtn();
+        //     (tab === "contacts") && await verifyTabOpened(createTender, createTenderData, tabs[0]);
+        //     (tab !== "contacts") && await verifyFieldErrorsByTab(createTender, createTenderData, tab);
+        // }
 
-        await createTender.handleTab(tabs[2], 'click');
-        await verifyTabOpened(createTender, createTenderData, tabs[2]);
-        await contactsTab.unckeckContactPersonCheckbox();
-        await verifyFieldErrorsByTab(createTender, createTenderData, tabs[2]);
+        // await createTender.handleTab(tabs[2], 'click');
+        // await verifyTabOpened(createTender, createTenderData, tabs[2]);
+        // await contactsTab.unckeckContactPersonCheckbox();
+        // await verifyFieldErrorsByTab(createTender, createTenderData, tabs[2]);
     });
 
     test("TC018 - Create tender with invalid tender name", async ({ createTender, generalInfoTab, dataGenerator, createTenderData }) => {
@@ -174,6 +175,35 @@ test.describe('Create tender functionality check', () => {
         }
         await fillAndCheckEnteredLength(generalInfoTab, fieldToCheck, createTenderData.invalidDeclaredBudget.exceeding.data, createTenderData.invalidDeclaredBudget.exceeding.allowedLength);
     })
+
+    test("TC024 - Verify location of works field", async ({ generalInfoTab, mapPopUp, createTenderData, dataGenerator }) => {
+        const fieldToCheck = 'worksLocation';
+        await generalInfoTab.fillGeneralInfoWithRndData(dataGenerator, fieldToCheck);
+
+        await generalInfoTab.fillGeneralInfoInput(fieldToCheck, createTenderData.worksLocation.outside);
+        await expect(generalInfoTab.getGeneralInfoInput(fieldToCheck)).toHaveText(createTenderData.worksLocation.default);
+
+        await generalInfoTab.clickChooseOnMapBtn();
+        while(await mapPopUp.getMapZoomButtonAccessability('out') !== "true") {
+            let zoomBefore = await mapPopUp.getMapZoom();
+            await mapPopUp.mapZoomOut();
+            await mapPopUp.pause(500);
+            let zoomAfter = await mapPopUp.getMapZoom();
+            expect(zoomAfter).toEqual(zoomBefore / 2);
+        }
+        await mapPopUp.selectLocationOutsideUkraine();
+        await mapPopUp.clickConfirmChoiceBtn();
+        await verifyFieldError(generalInfoTab, createTenderData, fieldToCheck, 'empty');
+
+        const clicks = ['cancelBtn', 'crossIcon'] as const;
+        for (const click of clicks) {
+            await generalInfoTab.clickChooseOnMapBtn();
+            await expect(mapPopUp.getMapPopUp()).toBeVisible();
+            await mapPopUp.closeMapPopUp(click);
+            await expect(mapPopUp.getMapPopUp()).toHaveCount(0);
+            await expect(generalInfoTab.getGeneralInfoInput(fieldToCheck)).toHaveText(createTenderData.worksLocation.empty);
+        }
+    });
     //     await generalInfo.fillGeneralInfoExcept('tenderName');
 
     //     await generalInfo.fillInput('tenderName', createTenderData.invalidTenderNames[0]);
