@@ -1,6 +1,5 @@
 import { DateTime } from 'luxon';
 import { test, expect, pages, testData } from '../fixtures/fixture';
-import { generateKey } from 'crypto';
 
 const photosDirName = 'data/createTenderData';
 const userLoginCredentials = {
@@ -14,28 +13,38 @@ const fieldsByTab = {
     "contacts": ["surname", "name", "phone"]
 };
 
-// async function verifyTabOpened(createTender: pages['createTender'], createTenderData: testData['createTenderData'], tabName: 'generalInfo' | 'documentation' | 'contacts') {
-//     await expect(await createTender.getSectionTitle(tabName)).toBeVisible();
-//     await expect((await createTender.handleTab(tabName, 'get'))!).toHaveClass(RegExp(createTenderData.tabActiveClass));
-// }
+async function verifyTabOpened(createTender: pages['createTender'], createTenderData: testData['createTenderData'], tabName: 'generalInfo' | 'documentation' | 'contacts') {
+    await expect(createTender.getSectionTitle(tabName)).toBeVisible();
+    await expect((await createTender.handleTab(tabName, 'get'))!).toHaveClass(RegExp(createTenderData.tabActiveClass));
+}
 
+async function verifyFieldErrorsByTab(generalInfoTab: pages['generalInfoTab'], documentationTab: pages['documentationTab'], contactsTab: pages['contactsTab'], createTenderData: testData['createTenderData'], tabName: 'generalInfo' | 'documentation' | 'contacts') {
+    for (const field of fieldsByTab[tabName]) {
+        (tabName === "generalInfo" && !["startDate", "workExecutionPeriod"].includes(field)) && await verifyFieldError(generalInfoTab, createTenderData, field, 'empty');
+        (tabName === "documentation") && await verifyDocumentationFieldError(documentationTab, createTenderData, field, 'empty');
+        (tabName === "contacts") && await verifyContactsFieldError(contactsTab, createTenderData, field, 'empty');
+    }
+}
 
-
-// async function verifyFieldErrorsByTab(createTender: pages['createTender'], createTenderData: testData['createTenderData'], tabName: 'generalInfo' | 'documentation' | 'contacts') {
-//     for (const field of fieldsByTab[tabName]) {
-//         (tabName !== "generalInfo" && !["startDate", "workExecutionPeriod"].includes(field)) && await verifyFieldError(createTender, createTenderData, field);
-//     }
-// }
-
-async function verifyFieldError(generalInfoTab: pages['generalInfoTab'], createTenderData: testData['createTenderData'], fieldName: 'tenderName' | 'serviceName' | 'endDate' | 'tenderProposalPeriod' | 'workExecutionPeriod' | 'worksLocation', errorType: 'less' | 'invalid' | 'empty') {
-    let fields: ("tenderName" | "serviceName" | "startDate" | "endDate" | 'workExecutionPeriod' | 'worksLocation')[] = (fieldName === 'tenderProposalPeriod') ? ['startDate', 'endDate'] : [fieldName];
+async function verifyFieldError(generalInfoTab: pages['generalInfoTab'], createTenderData: testData['createTenderData'], fieldName: 'tenderName' | 'serviceName' | 'endDate' | 'tenderProposalPeriod' | 'workExecutionPeriod' | 'worksLocation' | 'additionalInfo', errorType: 'less' | 'invalid' | 'empty') {
+    let fields: ("tenderName" | "serviceName" | "startDate" | "endDate" | 'workExecutionPeriod' | 'worksLocation' | 'additionalInfo')[] = (fieldName === 'tenderProposalPeriod') ? ['startDate', 'endDate'] : [fieldName];
     for (let field of fields) {
-        await expect(generalInfoTab.getGeneralInfoInput(field)).toHaveClass(RegExp(createTenderData.fieldsErrorClasses[fieldName]));
+        let input = (field === "additionalInfo" || field === "serviceName" || field === 'endDate') ? generalInfoTab.getInputWrapper(field) : generalInfoTab.getGeneralInfoInput(field);
+        await expect(input).toHaveClass(RegExp(createTenderData.fieldsErrorClasses[fieldName]));
     }
     await expect(generalInfoTab.getGeneralInfoInputErrorMsg(fieldName)).toHaveText(createTenderData.fieldsErrorMsgs[fieldName][errorType]);
 }
 
-async function fillAndVerifyFieldError(createTender: pages['createTender'], generalInfoTab: pages["generalInfoTab"], createTenderData: testData['createTenderData'], fieldName: 'tenderName' | 'tenderProposalPeriod' | 'workExecutionPeriod', data: string | Date, errorType: 'less' | 'invalid', clickNextBtn: boolean = true) {
+async function verifyDocumentationFieldError(documentationTab: pages['documentationTab'], createTenderData: testData['createTenderData'], fieldName: 'fileUpload', errorType: 'less' | 'invalid' | 'empty') {
+    await expect(documentationTab.getFileUploadArea()).toHaveClass(RegExp(createTenderData.fieldsErrorClasses[fieldName]));
+    await expect(documentationTab.getFileUploadErrorMsg()).toHaveText(createTenderData.fieldsErrorMsgs[fieldName][errorType]);
+}
+async function verifyContactsFieldError(contactsTab: pages['contactsTab'], createTenderData: testData['createTenderData'], fieldName: 'surname' | 'name' | 'phone', errorType: 'less' | 'invalid' | 'empty') {
+    await expect(contactsTab.getContactsTabInput(fieldName)).toHaveClass(RegExp(createTenderData.fieldsErrorClasses[fieldName]));
+    await expect(contactsTab.getContactsTabErrorMsg(fieldName)).toHaveText(createTenderData.fieldsErrorMsgs[fieldName][errorType]);
+}
+
+async function fillAndVerifyFieldError(createTender: pages['createTender'], generalInfoTab: pages["generalInfoTab"], createTenderData: testData['createTenderData'], fieldName: 'tenderName' | 'tenderProposalPeriod' | 'workExecutionPeriod' | 'additionalInfo', data: string | Date, errorType: 'less' | 'invalid', clickNextBtn: boolean = true) {
     const field = (fieldName === 'tenderProposalPeriod') ? 'endDate' : fieldName;
     (field !== 'endDate' && field !== 'workExecutionPeriod') && await generalInfoTab.clearGeneralInfoInput(field);
     await generalInfoTab.fillGeneralInfoInput(field, data);
@@ -47,7 +56,7 @@ async function fillAndVerifyFieldError(createTender: pages['createTender'], gene
     await verifyFieldError(generalInfoTab, createTenderData, fieldName, errorType);
 }
 
-async function fillAndCheckIfEmpty(generalInfoTab: pages["generalInfoTab"], fieldName: 'tenderName' | 'serviceName' | 'declaredBudget', data: string) {
+async function fillAndCheckIfEmpty(generalInfoTab: pages["generalInfoTab"], fieldName: 'tenderName' | 'serviceName' | 'declaredBudget' | 'additionalInfo', data: string) {
     await generalInfoTab.clearGeneralInfoInput(fieldName);
     await generalInfoTab.fillGeneralInfoInput(fieldName, data);
     await expect(generalInfoTab.getGeneralInfoInput(fieldName)).toHaveValue('');
@@ -59,18 +68,6 @@ async function fillAndCheckEnteredLength(generalInfoTab: pages["generalInfoTab"]
     await expect(generalInfoTab.getGeneralInfoInput(fieldName)).toHaveValue(data.slice(0, maxLength));
 }
 
-// async function verifyGeneralInfoInputError(inputName: string) {
-//     await createTender.clickNextBtn();
-//     await verifyTabOpened('generalInfo');
-//     await expect(await generalInfo.getInput(inputName)).toBeInViewport();
-//     await verifyFieldError(inputName);
-// }
-
-// async function verifyServiceDropdownErrorMsg(serviceName: string) {
-//     
-//     await expect(await createTender.getFieldErrorMsg("serviceDropdown")).toHaveText(errorMsg, { useInnerText: true });
-// }
-
 test.describe('Create tender functionality check', () => {
     test.beforeEach(async ({ loginPopUp, myTenders, telegramPopUp, endpointsData }) => {
         await loginPopUp.openUrl(endpointsData["myTenders"]);
@@ -81,21 +78,20 @@ test.describe('Create tender functionality check', () => {
         await myTenders.clickCreateTenderBtn();
     })
 
-    test("TC017 - Create tender with empty fields", async ({ createTender, contactsTab, createTenderData }) => {
-        // const tabs = ['generalInfo', 'documentation', 'contacts'] as const;
+    test("TC017 - Create tender with empty fields", async ({ createTender, generalInfoTab, documentationTab, contactsTab, createTenderData }) => {
+        const tabs = Object.keys(fieldsByTab);
+        for (let tab of tabs) {
+            (tab !== "generalInfo") && await createTender.handleTab(tab, 'click');
+            await verifyTabOpened(createTender, createTenderData, tab);
+            await createTender.clickNextBtn();
+            (tab === "contacts") && await verifyTabOpened(createTender, createTenderData, tabs[0]);
+            (tab !== "contacts") && await verifyFieldErrorsByTab(generalInfoTab, documentationTab, contactsTab, createTenderData, tab);
+        }
 
-        // for (let tab of tabs) {
-        //     (tab !== "generalInfo") && await createTender.handleTab(tab, 'click');
-        //     await verifyTabOpened(createTender, createTenderData, tab);
-        //     await createTender.clickNextBtn();
-        //     (tab === "contacts") && await verifyTabOpened(createTender, createTenderData, tabs[0]);
-        //     (tab !== "contacts") && await verifyFieldErrorsByTab(createTender, createTenderData, tab);
-        // }
-
-        // await createTender.handleTab(tabs[2], 'click');
-        // await verifyTabOpened(createTender, createTenderData, tabs[2]);
-        // await contactsTab.unckeckContactPersonCheckbox();
-        // await verifyFieldErrorsByTab(createTender, createTenderData, tabs[2]);
+        await createTender.handleTab(tabs[2], 'click');
+        await verifyTabOpened(createTender, createTenderData, tabs[2]);
+        await contactsTab.unckeckContactPersonCheckbox();
+        await verifyFieldErrorsByTab(generalInfoTab, documentationTab, contactsTab, createTenderData, tabs[2]);
     });
 
     test("TC018 - Create tender with invalid tender name", async ({ createTender, generalInfoTab, dataGenerator, createTenderData }) => {
@@ -184,12 +180,19 @@ test.describe('Create tender functionality check', () => {
         await expect(generalInfoTab.getGeneralInfoInput(fieldToCheck)).toHaveText(createTenderData.worksLocation.default);
 
         await generalInfoTab.clickChooseOnMapBtn();
-        while(await mapPopUp.getMapZoomButtonAccessability('out') !== "true") {
+        while (await mapPopUp.getMapZoomButtonAccessability('out') !== "true") {
             let zoomBefore = await mapPopUp.getMapZoom();
             await mapPopUp.mapZoomOut();
             await mapPopUp.pause(500);
             let zoomAfter = await mapPopUp.getMapZoom();
             expect(zoomAfter).toEqual(zoomBefore / 2);
+        }
+        while (await mapPopUp.getMapZoomButtonAccessability('in') !== "true") {
+            let zoomBefore = await mapPopUp.getMapZoom();
+            await mapPopUp.mapZoomIn();
+            await mapPopUp.pause(500);
+            let zoomAfter = await mapPopUp.getMapZoom();
+            expect(zoomAfter).toEqual(zoomBefore * 2);
         }
         await mapPopUp.selectLocationOutsideUkraine();
         await mapPopUp.clickConfirmChoiceBtn();
@@ -204,6 +207,18 @@ test.describe('Create tender functionality check', () => {
             await expect(generalInfoTab.getGeneralInfoInput(fieldToCheck)).toHaveText(createTenderData.worksLocation.empty);
         }
     });
+
+    test("TC025 - Create tender with invalid additional information", async ({ createTender, generalInfoTab, dataGenerator, createTenderData }) => {
+        const fieldToCheck = 'additionalInfo';
+        await generalInfoTab.fillGeneralInfoWithRndData(dataGenerator, fieldToCheck);
+
+        for (let invalidAdditionalInfo of createTenderData.invalidAddtionalInfo.notAccepted) {
+            await fillAndCheckIfEmpty(generalInfoTab, fieldToCheck, invalidAdditionalInfo);
+        }
+        for (let invalidAdditionalInfo of createTenderData.invalidAddtionalInfo.less) {
+            await fillAndVerifyFieldError(createTender, generalInfoTab, createTenderData, fieldToCheck, invalidAdditionalInfo, 'less');
+        }
+    })
     //     await generalInfo.fillGeneralInfoExcept('tenderName');
 
     //     await generalInfo.fillInput('tenderName', createTenderData.invalidTenderNames[0]);
