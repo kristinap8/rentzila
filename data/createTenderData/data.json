@@ -1,0 +1,152 @@
+{
+    "tabActiveClass": "Active",
+    "fieldsErrorClasses": {
+        "tenderName": "inputError",
+        "serviceName": "searchResultError",
+        "startDate": "errorDateWrapper",
+        "endDate": "errorDateWrapper",
+        "declaredBudget": "inputError",
+        "worksLocation": "labelError",
+        "additionalInfo": "textAreaError",
+        "fileUpload": "inputWrapperError",
+        "surname": "inputError",
+        "name": "inputError",
+        "phone": "OperatorForm_error"
+    },
+    "fieldsErrorMsgs": {
+        "tenderName": {
+            "empty": "Назва має містити щонайменше 10 символів",
+            "less": "Назва має містити щонайменше 10 символів"
+        },
+        "serviceName": {
+            "empty": "Це поле обов’язкове"
+        },
+        "serviceDropdown": {
+            "nonExisting": "На жаль, послугу “<SERVICE_NAME>“ не знайдено в нашій базі.\nВи можете додати послугу в категорію “Користувацькі”:"
+        },
+        "endDate": {
+            "empty": "Це поле обов’язкове"
+        },
+        "tenderProposalPeriod": {
+            "invalid": "Період між датами подання пропозицій має бути більшим за добу"
+        },
+        "workExecutionPeriod": {
+            "empty": "Це поле обов’язкове",
+            "invalid": "Це поле обов’язкове"
+        },
+        "declaredBudget": {
+            "empty": "Це поле обов’язкове"
+        },
+        "worksLocation": {
+            "empty": "Виберіть коректне місце на мапі України"
+        },
+        "additionalInfo": {
+            "empty": "Опис має містити щонайменше 40 символів (0)",
+            "less": "Опис має містити щонайменше 40 символів (39)"
+        },
+        "fileUpload": {
+            "empty": "Додайте до вашого тендеру як мінімум один файл"
+        },
+        "surname": {
+            "empty": "Це поле обов’язкове"
+        },
+        "name": {
+            "empty": "Це поле обов’язкове"
+        },
+        "phone": {
+            "empty": "Це поле обов’язкове"
+        }
+    },
+    "invalidTenderNames": {
+        "less": "tender123",
+        "notAccepted": [
+            "                ",
+            "^;<>{}"
+        ],
+        "exceeding": {
+            "data": "tendertendertendertendertendertendertendertendertendertendertendertend",
+            "allowedLength": 70
+        }
+    },
+    "invalidServiceNames": {
+        "exceeding": {
+            "data": "ПрибираннядахуПрибираннядахуПрибираннядахуПрибираннядахуПрибираннядахуПрибираннядахуПрибираннядахyПр",
+            "allowedLength": 100
+        },
+        "notAccepted": [
+            "^;<>{}",
+            "              "
+        ]
+    },
+    "nonExistingServiceName": {
+        "name": "Service test",
+        "category": "Користувацькі"
+    },
+    "invalidEndDate": {
+        "hoursDifference": 23
+    },
+    "invalidDeclaredBudget": {
+        "notAccepted": [
+            "^",
+            ";",
+            "<",
+            ">",
+            "{",
+            "}",
+            "budget",
+            "        ",
+            "?",
+            "00000"
+        ],
+        "exceeding": {
+            "data": "9876543210",
+            "allowedLength": 9
+        }
+    },
+    "worksLocation": {
+        "outside": "Прага",
+        "default": "Київ, вулиця Володимирська 21/20 Україна, Київська область",
+        "empty": "Виберіть на мапі"
+    },
+    "invalidAddtionalInfo": {
+        "notAccepted": [
+            "^",
+            ";",
+            "<",
+            ">",
+            "{",
+            "}",
+            "                          "
+        ],
+        "less": [
+            "This tender is classified as a commerci",
+            "This tender is classified as a commerci "
+        ]
+    },
+    "invalidFiles": [
+        "largeImg.png",
+        "tenderFile.txt"
+    ],
+    "validFiles": [
+        "municipalVehicle.jpeg",
+        "municipalVehicle2.jpeg",
+        "municipalVehicle3.png",
+        "municipalVehicle4.png",
+        "municipalVehicle5.jpeg",
+        "municipalVehicle6.jpg"
+    ],
+    "uploadFilePopUpTitle": "Невалідне фото",
+    "uploadFilePopUpErrorMsgs": {
+        "invalidFormatOrLarge": "Формат документа не підтримується, або завеликий розмір файлу. Допустимі формати: jpg, jpeg, png, pdf, doc, docx, xls, xlsx, zip. Ви не можете завантажити файл більше 20 МВ.",
+        "sameFiles": "Ви не можете завантажити двічі один файл.",
+        "maxFilesExceeded": "Ви можете додати максимум 5 файлів до одного тендеру. Або заархівуйте свої документи в zip файл."
+    },
+    "uploadFileErrorMsg": "Додайте до вашого тендеру як мінімум один файл",
+    "uploadFileErrorClass": "inputWrapperError",
+    "cancelTenderDialogMsg": "Ви впевнені, що хочете перейти на іншу сторінку? Внесені дані не збережуться!",
+    "tenderCreationPopUpMsg": "За створення тендера з вашого рахунку буде знято 10 балів, вони будуть повернуті у разі успішного завершення тендера.",
+    "successfulCreation": {
+        "title": "Ваш тендер поданий на розгляд",
+        "message": "Після перегляду модератором, Ваш тендер з’явиться на сайті"
+    }
+}
