@@ -12,6 +12,7 @@ const fieldsByTab = {
     "documentation": ["fileUpload"],
     "contacts": ["surname", "name", "phone"]
 };
+let createdTenderName: string;
 
 async function verifyTabOpened(createTender: pages['createTender'], createTenderData: testData['createTenderData'], tabName: 'generalInfo' | 'documentation' | 'contacts') {
     await expect(createTender.getSectionTitle(tabName)).toBeVisible();
@@ -20,9 +21,9 @@ async function verifyTabOpened(createTender: pages['createTender'], createTender
 
 async function verifyFieldErrorsByTab(generalInfoTab: pages['generalInfoTab'], documentationTab: pages['documentationTab'], contactsTab: pages['contactsTab'], createTenderData: testData['createTenderData'], tabName: 'generalInfo' | 'documentation' | 'contacts') {
     for (const field of fieldsByTab[tabName]) {
-        (tabName === "generalInfo" && !["startDate", "workExecutionPeriod"].includes(field)) && await verifyFieldError(generalInfoTab, createTenderData, field, 'empty');
-        (tabName === "documentation") && await verifyDocumentationFieldError(documentationTab, createTenderData, field, 'empty');
-        (tabName === "contacts") && await verifyContactsFieldError(contactsTab, createTenderData, field, 'empty');
+        (tabName === "generalInfo" && !["startDate", "workExecutionPeriod"].includes(field)) && await verifyFieldError(generalInfoTab, createTenderData, field as "tenderName" | "serviceName" | "endDate" | "workExecutionPeriod" | "worksLocation" | "additionalInfo" | "tenderProposalPeriod", 'empty');
+        (tabName === "documentation") && await verifyDocumentationFieldError(documentationTab, createTenderData, field as 'fileUpload', 'empty');
+        (tabName === "contacts") && await verifyContactsFieldError(contactsTab, createTenderData, field as 'surname' | 'name' | 'phone', 'empty');
     }
 }
 
@@ -79,7 +80,7 @@ test.describe('Create tender functionality check', () => {
     })
 
     test("TC017 - Create tender with empty fields", async ({ createTender, generalInfoTab, documentationTab, contactsTab, createTenderData }) => {
-        const tabs = Object.keys(fieldsByTab);
+        const tabs = Object.keys(fieldsByTab) as ('generalInfo' | 'documentation' | 'contacts')[];;
         for (let tab of tabs) {
             (tab !== "generalInfo") && await createTender.handleTab(tab, 'click');
             await verifyTabOpened(createTender, createTenderData, tab);
@@ -218,158 +219,121 @@ test.describe('Create tender functionality check', () => {
         for (let invalidAdditionalInfo of createTenderData.invalidAddtionalInfo.less) {
             await fillAndVerifyFieldError(createTender, generalInfoTab, createTenderData, fieldToCheck, invalidAdditionalInfo, 'less');
         }
-    })
-    //     await generalInfo.fillGeneralInfoExcept('tenderName');
+    });
 
-    //     await generalInfo.fillInput('tenderName', createTenderData.invalidTenderNames[0]);
-    //     await expect(await generalInfo.getInput('tenderName')).toHaveValue(createTenderData.invalidTenderNames[0]);
-    //     await verifyGeneralInfoInputError('tenderNaame');
-    //     await generalInfo.clearInput('tenderName');
+    test("TC026 - Create tender with invalid documents", async ({ createTender, createTenderData, documentationTab }) => {
+        await createTender.handleTab('documentation', 'click');
+        await verifyTabOpened(createTender, createTenderData, 'documentation');
 
-    //     await generalInfo.fillInput('tenderName', createTenderData.invalidTenderNames[1]);
-    //     await expect(await generalInfo.getInput('tenderName')).toHaveValue('');
-    //     await generalInfo.fillInput('tenderName', createTenderData.invalidTenderNames[2]);
-    //     await expect(await generalInfo.getInput('tenderName')).toHaveValue('');
+        async function uploadFilesAndVerifyPopUp(fileNames: string[], errorMsg?: string) {
+            await documentationTab.uploadDocumentationFiles(photosDirName, fileNames);
+            if (errorMsg) {
+                await expect(documentationTab.getNonValidImgPopUp()).toBeVisible();
+                await expect(documentationTab.getNonValidImgPopUpTitle()).toHaveText(createTenderData.uploadFilePopUpTitle);
+                await expect(documentationTab.getNonValidImagePopUpErrorMsg()).toHaveText(errorMsg);
+                await documentationTab.clickConfirmNonValidImgPopUpBtn();
+                await expect(documentationTab.getNonValidImgPopUp()).toHaveCount(0);
+            }
+        }
 
-    //     await generalInfo.fillInput('tenderName', createTenderData.invalidTenderNames[3]);
-    //     await expect(await generalInfo.getInput('tenderName')).toHaveValue(createTenderData.invalidTenderNames[3].substring(0, 70));
-    // })
+        async function verifyUploadedFiles(filesCount: number, fileNames?: string[]) {
+            await expect(documentationTab.getUploadedDocumentNames()).toHaveCount(filesCount);
+            if (filesCount != 0 && fileNames) {
+                await expect(documentationTab.getUploadedDocumentNames()).toHaveText(fileNames);
+            }
+        }
 
-    // test.skip("Create tender with invalid service name", async () => {
-    //     await generalInfo.fillGeneralInfoExcept('serviceName');
+        for (const invalidFile of createTenderData.invalidFiles) {
+            await uploadFilesAndVerifyPopUp([invalidFile], createTenderData.uploadFilePopUpErrorMsgs.invalidFormatOrLarge);
+            await verifyUploadedFiles(0);
+        }
 
-    //     await generalInfo.fillInput('serviceName', createTenderData.invalidServiceNames[0], false);
-    //     await expect(await generalInfo.getInput('serviceName')).toHaveValue(createTenderData.invalidServiceNames[0].substring(0, 100));
-    //     await verifyGeneralInfoInputError('serviceName');
-    //     await verifyServiceDropdownErrorMsg(createTenderData.invalidServiceNames[0]);
-    //     await generalInfo.clearInput("serviceName");
+        await uploadFilesAndVerifyPopUp([createTenderData.validFiles[0]]);
+        await verifyUploadedFiles(1, [createTenderData.validFiles[0]]);
+        await uploadFilesAndVerifyPopUp([createTenderData.validFiles[0]], createTenderData.uploadFilePopUpErrorMsgs.sameFiles);
+        await verifyUploadedFiles(1, [createTenderData.validFiles[0]]);
+        await uploadFilesAndVerifyPopUp(createTenderData.validFiles.slice(1), createTenderData.uploadFilePopUpErrorMsgs.maxFilesExceeded);
+        await verifyUploadedFiles(createTenderData.validFiles.length - 1, createTenderData.validFiles.slice(0, -1));
 
-    //     await generalInfo.fillInput('serviceName', createTenderData.invalidServiceNames[1]);
-    //     await expect(await generalInfo.getInput('serviceName')).toHaveValue('');
-    //     await generalInfo.fillInput('serviceName', createTenderData.invalidServiceNames[2]);
-    //     await expect(await generalInfo.getInput('serviceName')).toHaveValue('');
-    // })
+        for (let i = 0; i < createTenderData.validFiles.length - 1; i++) {
+            await documentationTab.deleteFirstUploadedFile();
+            await expect(documentationTab.getUploadedDocumentNames()).toHaveCount(createTenderData.validFiles.length - i - 2);
+        }
 
-    // test.skip("Create tender with non-existing service", async () => {
-    //     await generalInfo.fillInput('serviceName', createTenderData.nonExistingServiceName);
-    //     await expect(await generalInfo.getInput('serviceName')).toHaveValue(createTenderData.nonExistingServiceName);
-    //     await verifyServiceDropdownErrorMsg(createTenderData.nonExistingServiceName);
+        await createTender.clickNextBtn();
+        await verifyDocumentationFieldError(documentationTab, createTenderData, 'fileUpload', 'empty');
+    });
 
-    //     await generalInfo.clickCreateServiceBtn();
-    //     await expect(await generalInfo.getServiceNameDropdown()).toHaveCount(0);
-    //     await expect(await generalInfo.getTenderCategoryLabel()).toHaveText('Користувацькі');
+    test("TC028 - Cancel tender creation", async ({ myTenders, createTender, generalInfoTab, documentationTab, dataGenerator, createTenderData, endpointsData }) => {
+        await verifyTabOpened(createTender, createTenderData, 'generalInfo');
+        await createTender.handleTab('contacts', 'click');
+        await verifyTabOpened(createTender, createTenderData, 'contacts');
+        for (const tab of ['documentation', 'generalInfo'] as const) {
+            await createTender.clickBackBtn();
+            await verifyTabOpened(createTender, createTenderData, tab);
+        }
+        await createTender.handleDialog('accept', createTenderData.cancelTenderDialogMsg);
+        await createTender.clickBackBtn();
+        await expect(myTenders.page).toHaveURL(endpointsData.myTenders);
 
-    //     await generalInfo.clickServiceNameCloseIcon();
-    //     await expect(await generalInfo.getInput('serviceName')).toHaveValue('');
+        await myTenders.waitForPageLoad();
+        await myTenders.clickCreateTenderBtn();
+        await createTender.handleDialog('dismiss', createTenderData.cancelTenderDialogMsg);
+        await createTender.clickBackBtn();
+        await expect(createTender.page).toHaveURL(endpointsData.createTender);
 
-    //     await generalInfo.fillInput('serviceName', createTenderData.nonExistingServiceName);
-    //     await expect(await generalInfo.getServiceNameDropdownItems()).toHaveText(createTenderData.nonExistingServiceName);
+        await generalInfoTab.fillGeneralInfoWithRndData(dataGenerator, undefined);
+        await generalInfoTab.pause(500);
+        await createTender.clickNextBtn();
+        await documentationTab.uploadDocumentationFiles(photosDirName, [createTenderData.validFiles[0]]);
+        await createTender.clickNextBtn();
+        await createTender.clickNextBtn();
+        await expect(createTender.getTenderConfirmPopUpMsg()).toContainText(createTenderData.tenderCreationPopUpMsg);
+        await createTender.clickTenderConfirmPopUp('crossIcon');
+        await verifyTabOpened(createTender, createTenderData, 'contacts');
+        await createTender.clickNextBtn();
+        await createTender.handleDialog('accept', createTenderData.cancelTenderDialogMsg);
+        await createTender.clickTenderConfirmPopUp('cancel');
+        await expect(myTenders.page).toHaveURL(endpointsData.myTenders);
+    });
 
-    //     const status = await createTenderApiHelper.deleteService('Service test');
-    //     expect(status).toEqual(204);
-    // })
+    test("TC029 - Create tender with valid data and user as a contact person", async ({ createTender, generalInfoTab, documentationTab, completeTenderCreation, notificationPopUp, navBar, myTenders, dataGenerator, createTenderData, notificationMsgs, endpointsData, helper }) => {
+        let userBalanceBefore = Number(await navBar.getProfileDropdownBalance());
+        let enteredData = await generalInfoTab.fillGeneralInfoWithRndData(dataGenerator, undefined);
+        await generalInfoTab.pause(700);
+        await createTender.clickNextBtn();
+        await documentationTab.uploadDocumentationFiles(photosDirName, [createTenderData.validFiles[0]]);
+        await createTender.clickNextBtn();
+        await createTender.clickNextBtn();
+        await expect(createTender.getTenderConfirmPopUpMsg()).toContainText(createTenderData.tenderCreationPopUpMsg);
+        await createTender.clickTenderConfirmPopUp('create');
 
-    // test.skip("Create tender with invalid tender proposal submission period", async () => {
-    //     await generalInfo.fillGeneralInfoExcept('endDate');
+        await expect(completeTenderCreation.getTitle()).toHaveText(createTenderData.successfulCreation.title);
+        await expect(completeTenderCreation.getMessage()).toHaveText(createTenderData.successfulCreation.message);
+        await expect(notificationPopUp.getNotificationPopUpMsg()).toHaveText(notificationMsgs.toastNotificationMsgs.createTender);
+        expect(Number(await navBar.getProfileDropdownBalance())).toEqual((userBalanceBefore - 10) > 10 ? userBalanceBefore - 10 : 100);
 
-    //     await generalInfo.fillEndDate(23);
-    //     await createTender.clickNextBtn();
-    //     await verifyTabOpened('generalInfo');
-    //     await expect(await generalInfo.getInput('endDate')).toBeInViewport();
-    //     await expect(await createTender.getFieldBoarder('endDate')).toHaveClass(RegExp(createTenderData.fieldsErrorClasses['endDate']));
-    //     await expect(await createTender.getFieldBoarder('endDate')).toHaveClass(RegExp(createTenderData.fieldsErrorClasses['endDate']));
-    //     await expect(await createTender.getFieldErrorMsg('tenderProposalPeriod')).toHaveText(createTenderData.fieldsErrorMsgs.tenderProposalPeriod);
-    // })
+        await completeTenderCreation.clickViewInMyTendersBtn();
+        await expect(myTenders.page).toHaveURL(endpointsData.myTenders);
 
-    // test.skip("Create tender with invalid work execution period", async () => {
-    //     await generalInfo.fillGeneralInfoExcept();
+        await myTenders.refresh();
+        await navBar.clickNavbarItem('notificationMenuIcon');
+        await expect(await navBar.getLastNoticationMsg()).toHaveText(notificationMsgs.navBarNotificationDropdownMsgs.createTender);
 
-    //     const endProposalSubmissionDate = await (await generalInfo.getInput('endDate')).inputValue();
-    //     const startDate = await generalInfo.fillWorkExecutionPeriod(true);
-    //     console.log(startDate);
-    //     await expect(await generalInfo.getInput('workExecutionPeriod')).toHaveValue("31.03.2024 - ");
-    //     await generalInfo.pause(5000);
+        await myTenders.goToTendersTab('expecting');
+        createdTenderName = enteredData.find(item => item.input === 'tenderName').value;
+        await myTenders.searchUnit(createdTenderName);
+        await expect(myTenders.getTenderCards()).toHaveCount(1);
+        expect(await myTenders.getTenderCardInfo('serviceName')).toEqual(enteredData.find(item => item.input === 'serviceName').value);
+        expect(await myTenders.getTenderCardInfo('declaredBudget')).toEqual(enteredData.find(item => item.input === 'declaredBudget').value);
+        expect(await myTenders.getTenderCardInfo('worksExecutionPeriod')).toEqual(enteredData.find(item => item.input === 'workExecutionPeriod').value.map(item => helper.convertDateToString(item)));
+        expect(await myTenders.getTenderCardInfo('worksLocation')).toEqual(enteredData.find(item => item.input === 'worksLocation').value);
+    });
 
-    // })
-
-    // test.skip("Create tender with invalid documents", async () => {
-    //     async function uploadFilesAndVerifyPopUp(fileNames: string[], errorMsg?: string) {
-    //         await documentation.uploadDocumentationFiles(dirName, fileNames);
-    //         if (errorMsg) {
-    //             await expect(await documentation.getNonValidImgPopUp()).toBeVisible();
-    //             await expect(await documentation.getNonValidImgPopUpTitle()).toHaveText(createTenderData.uploadFilePopUpTitle);
-    //             await expect(await documentation.getNonValidImagePopUpErrorMsg()).toHaveText(errorMsg);
-    //             await documentation.clickConfirmNonValidImgPopUpBtn();
-    //             await expect(await documentation.getNonValidImgPopUp()).toHaveCount(0);
-    //         }
-    //     }
-
-    //     async function verifyUploadedFiles(filesCount: number, fileNames?: string[]) {
-    //         await expect(await documentation.getUploadedDocumentNames()).toHaveCount(filesCount);
-    //         if (filesCount != 0 && fileNames) {
-    //             await expect(await documentation.getUploadedDocumentNames()).toHaveText(fileNames);
-    //         }
-    //     }
-
-    //     await createTender.handleTab('documentation', 'click');
-    //     await verifyTabOpened('documentation');
-
-    //     for (const invalidFile of createTenderData.invalidFiles) {
-    //         await uploadFilesAndVerifyPopUp([invalidFile], createTenderData.uploadFilePopUpErrorMsgs.invalidFormatOrLarge);
-    //         await verifyUploadedFiles(0);
-    //     }
-
-    //     await uploadFilesAndVerifyPopUp([createTenderData.validFiles[0]]);
-    //     await verifyUploadedFiles(1, [createTenderData.validFiles[0]]);
-    //     await uploadFilesAndVerifyPopUp([createTenderData.validFiles[0]], createTenderData.uploadFilePopUpErrorMsgs.sameFiles);
-    //     await verifyUploadedFiles(1, [createTenderData.validFiles[0]]);
-
-    //     await uploadFilesAndVerifyPopUp(createTenderData.validFiles.slice(1), createTenderData.uploadFilePopUpErrorMsgs.maxFilesExceeded);
-    //     await verifyUploadedFiles(createTenderData.validFiles.length - 1, createTenderData.validFiles.slice(0, -1));
-
-    //     for (let i = 0; i < createTenderData.validFiles.length - 1; i++) {
-    //         await documentation.deleteFirstUploadedFile();
-    //         await expect(await documentation.getUploadedDocumentNames()).toHaveCount(createTenderData.validFiles.length - i - 2);
-    //     }
-
-    //     await createTender.clickNextBtn();
-    //     await verifyFieldError('fileUpload');
-    // })
-
-    // test("Cancel tender creation", async () => {
-    //     await verifyTabOpened('generalInfo');
-
-    //     await createTender.handleTab('contacts', 'click');
-    //     await verifyTabOpened('contacts');
-
-    //     await createTender.clickBackBtn();
-    //     await verifyTabOpened('documentation');
-
-    //     await createTender.clickBackBtn();
-    //     await verifyTabOpened('generalInfo');
-
-    //     await createTender.handleDialog('Ви впевнені, що хочете перейти на іншу сторінку? Внесені дані не збережуться!', 'accept');
-    //     await createTender.clickBackBtn();
-    //     await expect(await myTenders.getPageTitle()).toHaveText('Мої тендери');
-
-    //     await myTenders.clickCreateTenderBtn();
-    //     await createTender.handleDialog('Ви впевнені, що хочете перейти на іншу сторінку? Внесені дані не збережуться!', 'dismiss');
-    //     await createTender.clickBackBtn();
-
-    //     await generalInfo.fillGeneralInfoExcept();
-    //     await createTender.clickNextBtn();
-    //     await documentation.uploadDocumentationFiles(dirName, ["municipalVenicle.png"]);
-    //     await createTender.clickNextBtn();
-
-    //     await createTender.clickNextBtn();
-    //     await expect(await createTender.getTenderConfirmPopUpMsg()).toContainText("За створення тендера з вашого рахунку буде знято 10 балів, вони будуть повернуті у разі успішного завершення тендера.\
-    //     Ви підтверджуєте створення тендера?", {useInnerText: true});
-    //     await createTender.clickTenderConfirmPopUp('cross');
-    //     await verifyTabOpened('contacts');
-
-    //     await createTender.clickNextBtn();
-    //     await createTender.handleDialog('Ви впевнені, що хочете перейти на іншу сторінку? Внесені дані не збережуться!', 'accept');
-    //     await createTender.clickTenderConfirmPopUp('cancel');
-    //     await expect(await myTenders.getPageTitle()).toHaveText('Мої тендери');
-    // })
+    test.afterAll(async ({ tenderApiHelper }) => {
+        const tenderId = await tenderApiHelper.getTenderIdByName(createdTenderName);
+        if (tenderId) {
+            await tenderApiHelper.deleteTender(tenderId);
+        }
+    });
 });
