@@ -1,39 +1,25 @@
-// import { test, expect } from '@playwright/test';
-// import { MainPage } from '../pages/mainPage.page';
-// import { NavBar } from '../pages/components/navbar';
-// import { LoginPopUp } from '../pages/components/loginPopUp';
-// import { MyAdvertisments } from '../pages/myAdvertisments.page';
-// import CreateUnitApiHelper from '../helper/createUnitAPI.helper';
+import { test, expect } from '../fixtures/fixture';
 
+const folderName = 'createUnitData';
+const imageName = 'vehicle.jpg';
+const userLoginCredentials = {
+    "email": String(process.env.USER_EMAIL),
+    "password": String(process.env.USER_PASSWORD)
+}
 
-// let mainPage: MainPage;
-// let navBar: NavBar;
-// let loginPopUp: LoginPopUp;
-// let myAdvertisments: MyAdvertisments;
-// const createUnitApiHelper = new CreateUnitApiHelper();
+test.describe('Create unit check', () => {
+    test('Verify unit creation using API', async ({ unitApiHelper, loginPopUp, myUnitsPage, endpointsData }) => {
+        const unitData = await unitApiHelper.createUnit();
+        await unitApiHelper.addUnitImage(unitData.id, folderName, imageName);
 
-// test.describe('Create unit check', () => {
-//     test('Verify unit creation', async ({page}) => {
-//         mainPage = new MainPage(page);
-//         navBar = new NavBar(page);
-//         loginPopUp = new LoginPopUp(page);
-//         myAdvertisments = new MyAdvertisments(page);
-//         await mainPage.openUrl();
+        await myUnitsPage.openUrl(endpointsData.myUnits);
+        await loginPopUp.login({ emailPhone: userLoginCredentials.email, password: userLoginCredentials.password });
+        await myUnitsPage.clickTab('pending');
+        await myUnitsPage.searchUnit(unitData.name);
+        await expect(myUnitsPage.getUnitCardNames()).toHaveCount(1);
+        await expect(myUnitsPage.getUnitCardNames()).toHaveText(unitData.name);
 
-//         const unitData = await createUnitApiHelper.generateUnitData();
-//         let responseStatus = await createUnitApiHelper.createUnit(unitData);
-//         expect(responseStatus).toBe(201);
-//         responseStatus = await createUnitApiHelper.uploadUnitImage();
-//         expect(responseStatus).toBe(201);
-
-//         await navBar.clickLoginBtn();
-//         await loginPopUp.login(process.env.USER_EMAIL, process.env.USER_PASSWORD);
-//         await navBar.clickAvatarIcon();
-//         await navBar.clickAdvertismentsDropdownItem();
-//         await myAdvertisments.clickExpectedAdvertismentsTab();
-//         await expect(await myAdvertisments.getExpectedUnitCardNames()).toContainText([unitData.name]);
-        
-//         responseStatus = await createUnitApiHelper.deleteUnit();
-//         expect(responseStatus).toBe(204);
-//     });
-// });
+        // Postcondition: delete created unit
+        await unitApiHelper.deleteUnit(unitData.id);
+    });
+});
