@@ -77,6 +77,9 @@ class ApiHelper {
                 throw new Error('Invalid name parameter');
         }
         const response = await (await this.apiContext).get(endpoint);
+        if (response.status() !== 200) {
+            throw new Error(`Failed to fetch data of ${name}`);
+        }
         return await response.json();
     }
 
@@ -96,6 +99,25 @@ class ApiHelper {
                 return responseJson.name;
             }
             categoryId = responseJson.parent;
+        }
+    }
+
+    async deleteServiceByName(serviceName: string) {
+        if (!this.adminAccessToken) {
+            this.adminAccessToken = await this.createAccessToken("admin");
+        }
+        let responseJson = await this.getData('services');
+
+        let foundServiceData = responseJson.find(serviceData => serviceData.name === serviceName);
+        if (!foundServiceData) {
+            throw new Error(`The service with service name: ${serviceName} isn't found`);
+        }
+
+        let response = await (await this.apiContext).delete(`crm/services/${foundServiceData.id}/`, {
+            headers: { 'Authorization': `Bearer ${this.adminAccessToken}` }
+        });
+        if (response.status() !== 204) {
+            throw new Error(`Failed to delete service: ${serviceName} (response.status: ${response.status()})`);
         }
     }
 }

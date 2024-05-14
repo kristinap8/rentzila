@@ -1,5 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { DateTime } from 'luxon';
+import { ukrainianCities } from '../data/ukrainianCities.json';
+import ApiHelper from './api.helper';
 
 class DataGenerator {
     public generateRandomUUID() {
@@ -54,6 +56,13 @@ class DataGenerator {
         return randomServices.map(service => service.id);
     }
 
+    public async getRandomServiceName() {
+        const apiHelper = new ApiHelper();
+        const services = await apiHelper.getData('services');
+        const randomService: any = faker.helpers.arrayElement(services);
+        return randomService.name;
+    }
+
     public generateCurrency() {
         return faker.helpers.arrayElement(['UAH', 'USD', 'EUR']);
     }
@@ -74,93 +83,82 @@ class DataGenerator {
     public getRandomElementFromArray(array: Array<any>) {
         return faker.helpers.arrayElement(array);
     }
+
+    public generateFirstName() {
+        return faker.person.firstName();
+    }
+
+    public generateLastName() {
+        return faker.person.lastName();
+    }
+
+    public generateMiddleName() {
+        return faker.person.middleName();
+    }
+
+    public generateCity() {
+        return faker.helpers.arrayElement(ukrainianCities).replace('’', "'");
+    }
+
+    /**
+    * Generates random ukrainian phone number in the format '+380#########'
+    *
+    * @returns {string} The random phone number in the specified format.
+    */
+    public generatePhoneNumber(): string {
+        const operatorCodes = ['050', '063', '066', '073', '091', '092', '093', '094', '095', '096', '097', '098', '099'];
+        let phoneNumber = '+38' + faker.helpers.arrayElement(operatorCodes) + faker.string.numeric(7);
+        return phoneNumber;
+    }
+
+    public generateTelegramUsername() {
+        const length = faker.number.int({ min: 5, max: 15 });
+        // Generate the first character as alphabetic
+        let username = faker.string.alpha(1);
+        // Generate characters excluding the first and last, which can contain alphabetic, numeric, or underscore
+        username += faker.helpers.fromRegExp(RegExp(`[a-zA-Z0-9_]{${length - 1}}`));
+        // Generate the last character, which can contain alphabetic or numeric characters
+        username += faker.string.alphanumeric(1);
+        return username;
+    }
+
+    public generateTaxpayerNumber() {
+        return faker.string.numeric(10);
+    }
+
+    public generateLegalType() {
+        return faker.helpers.arrayElement(['ТОВ', 'ВАТ', 'ЗАТ']);
+    }
+
+    public generateEdrpou() {
+        return faker.string.numeric(8);
+    }
+
+    public generateLegalEntityName() {
+        return faker.company.name().slice(25);
+    }
+
+    public generateFutureDate(years: number = 1) {
+        return faker.date.future({ years });
+    }
+
+    /**
+     * Generate a random time difference in hours between 24 and a specified maximum.
+     * 
+     * @param {number} maxHours - The maximum number of hours for the time difference.
+     * @returns {number} - A random time difference in hours.
+     */
+    public generateHoursDifference(maxHours: number = 24 * 100): number {
+        return faker.number.int({ min: 24, max: maxHours });
+    }
+
+    public generateDaysDifference(minDays: number = 0, maxDays: number = 365): number {
+        return faker.number.int({ min: minDays, max: maxDays });
+    }
+
+    public generateDeclaredBudget() {
+        return faker.number.int({ min: 1, max: 999999999 });
+    }
 }
 
 export default DataGenerator;
-
-// public generateOrderUnitPeriod() {
-//     const startDate = faker.date.soon({ days: 30 });
-//     const maxEndDate = DateTime.fromJSDate(startDate).plus({ months: 2 }).toJSDate();
-//     const endDate = faker.date.between({ from: startDate, to: maxEndDate });
-
-//     return { startDate, endDate };
-// }
-
-// public generateUnitName() {
-//     return "Test unit" + faker.string.uuid();
-// }
-
-// public generateModelName() {
-//     return faker.lorem.word({ length: { min: 1, max: 15 } });
-// }
-
-
-
-// public generateComment() {
-//     return faker.lorem.sentences({ min: 1, max: 40 });
-// }
-
-
-
-
-
-// public generateMinimalPrice() {
-//     return faker.number.int({ min: 1, max: 999999999 });
-// }
-
-// public generateMoneyValue() {
-//     return faker.helpers.arrayElement(['UAH', 'USD', 'EUR']);
-// }
-
-
-
-
-
-
-
-// public getRandomCategory(categories: Array<any>) {
-//     const randomCategory: any = faker.helpers.arrayElement(categories.filter(category => category.level === 3));
-//     return randomCategory.id;
-// }
-
-// public getRandomServices(services: Array<JSON>) {
-//     const randomServices: any = faker.helpers.arrayElements(services, { min: 1, max: 10 });
-//     return randomServices.map(service => service.id);
-// }
-
-// private generateText(length: number) {
-//     let text = '';
-//     while (text.length < length) {
-//         text += faker.lorem.words();
-//     }
-//     return text.substring(0, length);
-// }
-
-// public getRandomInd(elementsCount: number) {
-//     return faker.number.int({ min: 0, max: elementsCount - 1 });
-// }
-
-// public generateTenderName(length?: number) {
-//     if (!length) {
-//         length = faker.number.int({ min: 10, max: 70 });
-//     }
-//     return this.generateText(length);
-// }
-
-// public async getRandomService() {
-//     const createUnitApiHelper = new CreateUnitApiHelper();
-//     const services = await createUnitApiHelper.getData('services') as { name: string }[];
-//     return faker.helpers.arrayElement(services).name;
-// }
-
-// public generateDeclaredBudget() {
-//     return faker.number.int({ min: 1, max: 999999999 });
-// }
-
-// public generateAdditionalInfo(length?: number) {
-//     if (!length) {
-//         length = faker.number.int({ min: 40, max: 50 });
-//     }
-//     return this.generateText(length);
-// }
-

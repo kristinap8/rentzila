@@ -29,6 +29,9 @@ class UnitApiHelper extends ApiHelper {
 
     public async getUnit(unitId: number) {
         const response = await (await this.apiContext).get(`units/${unitId}/`);
+        if (response.status() !== 200) {
+            throw new Error(`Failed to get the unit by id`);
+        }
         return response;
     }
     private async generateUnitData(): Promise<Unit> {
@@ -62,15 +65,18 @@ class UnitApiHelper extends ApiHelper {
             data: await this.generateUnitData(),
             headers: { 'Authorization': `Bearer ${this.userAccessToken}` }
         });
-        return response;
+        if (response.status() !== 201) {
+            throw new Error(`Failed to create unit, status: ${response.status()}`);
+        }
+        const responseBody = await response.json();
+        return responseBody;
     }
 
-    public async addUnitImage(unitId: number) {
+    public async addUnitImage(unitId: number, folderName: string, unitImageName: string) {
         if (!this.userAccessToken) {
             super.userAccessToken = await super.createAccessToken("user");
         }
-        const fileName = 'vehicle.jpg';
-        const stream = fs.createReadStream(path.resolve('data', 'unitData', fileName));
+        const stream = fs.createReadStream(path.resolve('data', folderName, unitImageName));
         const response = await (await this.apiContext).post('unit-images/', {
             headers: { 'Authorization': `Bearer ${this.userAccessToken}` },
             multipart: {
@@ -79,6 +85,9 @@ class UnitApiHelper extends ApiHelper {
                 image: stream
             }
         });
+        if (response.status() !== 201) {
+            throw new Error(`Failed to upload image to tender`);
+        }
         return response;
     }
 
@@ -92,6 +101,9 @@ class UnitApiHelper extends ApiHelper {
                 is_approved: true
             }
         });
+        if (response.status() !== 200) {
+            throw new Error(`Failed to approve the unit`);
+        }
         return response;
     }
 
@@ -106,6 +118,9 @@ class UnitApiHelper extends ApiHelper {
                 is_approved: false
             }
         });
+        if (response.status() !== 200) {
+            throw new Error(`Failed to decline the unit`);
+        }
         return response;
     }
 
@@ -119,6 +134,9 @@ class UnitApiHelper extends ApiHelper {
                 is_archived: true
             }
         });
+        if (response.status() !== 202) {
+            throw new Error(`Failed to deactive the unit`);
+        }
         return response;
     }
 
@@ -129,6 +147,9 @@ class UnitApiHelper extends ApiHelper {
         const response = await (await this.apiContext).delete(`units/${unitId}/`, {
             headers: { 'Authorization': `Bearer ${this.adminAccessToken}` }
         });
+        if(response.status() !== 204) {
+            throw new Error(`Failed to delete the unit`);
+        }
         return response;
     }
 
@@ -140,92 +161,10 @@ class UnitApiHelper extends ApiHelper {
         const response = await (await this.apiContext).post(`auth/users/${userId}/favourite-units/${unitId}/`, {
             headers: { 'Authorization': `Bearer ${this.userAccessToken}` }
         });
+        if(response.status() !== 201) {
+            throw new Error(`Failed to add unit to favourites`);
+        }
         return response;
     }
 }
 export default UnitApiHelper;
-// public async createUnit(unitParams: Unit) {
-//     this.userAccessToken = await this.createAccessToken(
-//         loginData.userEmail,
-//         loginData.userPassword,
-//         loginData.userPhone
-//     );
-//     const response = await (await this.apiContext).post('units/', {
-//         data: unitParams,
-//         headers: { 'Authorization': `Bearer ${this.userAccessToken}` }
-//     });
-//     this.createdUnitId = (await response.json()).id;
-//     return response;
-// }
-
-// public async uploadUnitImage(dirName: string, imageName: string) {
-//     const file = path.resolve("data/", "municipalVehicle.jpeg");
-//     const image = fs.readFileSync(file);
-//     const response = await (await this.apiContext).post(`unit-images/`, {
-//         multipart: {
-//             unit: this.createdUnitId,
-//             image: {
-//                 name: file,
-//                 mimeType: "image/jpeg",
-//                 buffer: image,
-//             },
-//             is_main: true
-//         },
-//         headers: {
-//             'Accept': "*/*",
-//             'ContentType': "multipart/form-data",
-//             'Authorization': `Bearer ${this.userAccessToken}`
-//         }
-//     });
-//     return response.status()
-// }
-
-// public async getData(name: string) {
-//     let endpoint: string;
-//     switch (name) {
-//         case 'ownerInfo':
-//             endpoint = `auth/users/phone/${process.env.USER_PHONE_NUMBER}/`;
-//             break;
-//         case 'manufacturers':
-//             endpoint = 'manufacturers/';
-//             break;
-//         case 'categories':
-//             endpoint = 'category/';
-//             break;
-//         case 'services':
-//             endpoint = 'services/';
-//             break;
-//         default:
-//             throw new Error('Invalid name parameter');
-//     }
-
-//     const response = await (await this.apiContext).get(endpoint);
-//     return await response.json();
-// }
-
-// public async approveUnit() {
-//     this.adminAccessToken = await this.createAccessToken(
-//         loginData.adminEmail,
-//         loginData.adminPassword,
-//         loginData.adminPhone
-//     );
-//     const response = await (await this.apiContext).patch(`crm/units/${this.createdUnitId}/moderate/`, {
-//         data: { is_approved: true },
-//         headers: { 'Authorization': `Bearer ${this.adminAccessToken}` }
-//     });
-//     return response.status();
-// }
-
-// public async deleteUnit(): Promise<number> {
-//     this.adminAccessToken = await this.createAccessToken(
-//         loginData.adminEmail,
-//         loginData.adminPassword,
-//         loginData.adminPhone
-//     );
-//     const response = await (await this.apiContext).delete(`units/${this.createdUnitId}/`, {
-//         headers: { 'Authorization': `Bearer ${this.adminAccessToken}` }
-//     });
-//     return response.status();
-// }
-
-
