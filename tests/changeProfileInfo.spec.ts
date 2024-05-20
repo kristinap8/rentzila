@@ -1,6 +1,6 @@
 import { test, expect, pages, helpers, testData } from '../fixtures/fixture';
 
-const photosDirName: string = 'data/myProfileData';
+const photosDirName = 'data/myProfileData';
 const userLoginCredentials = {
     "email": String(process.env.USER_EMAIL),
     "phoneNumber": String(process.env.USER_PHONE_NUMBER),
@@ -25,11 +25,11 @@ async function fillAndCheckIfEmpty(myProfile: pages["myProfile"], fieldName: 'in
     await expect(myProfile.getMyProfileInput(fieldName)).toHaveValue('');
 }
 
-async function fillAndVerifyFieldError(myProfile: pages["myProfile"], myProfileData: testData["myProfileData"], fieldName: 'individualTaxpayerNumber' | 'enterpreneurTaxpayerNumber' | 'edrpou' | 'legalEntityName' | 'surname' | 'name' | 'patronymic' | 'city' | 'phoneNumber' | 'viber' | 'telegram', data: string, errorMsg: string, clickSaveChanngesBtn: boolean = true) {
+async function fillAndVerifyFieldError(myProfile: pages["myProfile"], myProfileData: testData["myProfileData"], fieldName: 'individualTaxpayerNumber' | 'enterpreneurTaxpayerNumber' | 'edrpou' | 'legalEntityName' | 'surname' | 'name' | 'patronymic' | 'city' | 'phoneNumber' | 'viber' | 'telegram', data: string, errorMsg: string, clickSaveChangesBtn: boolean = true) {
     await myProfile.clearMyProfileFormField(fieldName);
     await myProfile.fillMyProfileFormField(fieldName, data);
     await expect(myProfile.getMyProfileInput(fieldName)).toHaveValue(data);
-    if (clickSaveChanngesBtn) {
+    if (clickSaveChangesBtn) {
         await myProfile.clickSaveChangesBtn();
         await expect(myProfile.getMyProfileInput(fieldName)).toBeInViewport();
     }
@@ -67,7 +67,7 @@ test.describe('My profile functionality check', async () => {
             await expect(myProfile.getInvalidPhotoPopUpElement('popUpContainer')).toHaveCount(0);
         }
 
-        const clicks: ('confirmBtn' | 'crossIcon' | 'outside')[] = ['confirmBtn', 'crossIcon', 'outside'];
+        const clicks = ['confirmBtn', 'crossIcon', 'outside'] as const;
         await loginAndCloseTelegramPopUp(loginPopUp, telegramPopUp, userLoginCredentials.email, userLoginCredentials.password);
 
         const originalProfilePhotoName: string = helper.getImageNameFromSrc((await myProfile.getProfilePhotoSrc())!);
@@ -120,8 +120,8 @@ test.describe('My profile functionality check', async () => {
     });
 
     test("TC005 - Change profile information with invalid legal entity information", async ({ loginPopUp, telegramPopUp, myProfile, dataGenerator, myProfileData, helper }) => {
-        const legalEntityElements: ("legalTypeDropdown" | "edrpou" | "legalEntityName")[] = ["legalTypeDropdown", "edrpou", "legalEntityName"];
-        const legalEntityInputs: ("edrpou" | "legalEntityName")[] = ["edrpou", "legalEntityName"];
+        const legalEntityElements = ["legalTypeDropdown", "edrpou", "legalEntityName"] as const;
+        const legalEntityInputs = ["edrpou", "legalEntityName"] as const;
         const personType = "legal entity";
 
         await loginAndCloseTelegramPopUp(loginPopUp, telegramPopUp, userLoginCredentials.email, userLoginCredentials.password);
@@ -335,7 +335,7 @@ test.describe('My profile functionality check', async () => {
     })
 
     test("TC016 - Change profile information with the valid data", async ({ loginPopUp, telegramPopUp, myProfile, notificationPopUp, myProfileData, notificationMsgs, dataGenerator, helper }) => {
-        const personTypes: ('private individual' | 'individual entrepreneur' | 'legal entity')[] = ['private individual', 'individual entrepreneur', 'legal entity'];
+        const personTypes = ['private individual', 'individual entrepreneur', 'legal entity'] as const;
         let newPersonTypeData: { fieldName: string; inputValue: string; }[];
         let newMyProfileData: { fieldName: string; inputValue: string; }[];
 
@@ -347,7 +347,7 @@ test.describe('My profile functionality check', async () => {
                 newMyProfileData = await myProfile.fillMyProfileFormWithRndData(dataGenerator);
             }
             await myProfile.clickSaveChangesBtn();
-            await expect(notificationPopUp.getNotificationPopUpMsg()).toHaveText(notificationMsgs.editMyProfile);
+            await expect(notificationPopUp.getNotificationPopUpMsg()).toHaveText(notificationMsgs.toastNotificationMsgs.editMyProfile);
             await myProfile.reload();
             for (let data of newPersonTypeData) {
                 expect(await myProfile.getMyProfileInputValue(data.fieldName)).toEqual(data.inputValue);
@@ -367,5 +367,6 @@ test.describe('My profile functionality check', async () => {
         await myProfile.selectPersonType(myProfileData.personTypes['individual entrepreneur']);
         await myProfile.fillPersonTypeInfoWithRndData(dataGenerator, 'individual entrepreneur');
         await myProfile.fillMyProfileFormWithRndData(dataGenerator);
+        await myProfile.clickSaveChangesBtn();
     })
 })

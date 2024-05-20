@@ -1,22 +1,13 @@
-import { test, expect, Locator } from '@playwright/test';
-import { Footer } from '../pages/components/footer';
-import { NavBar } from '../pages/components/navbar';
-import { MainPage } from '../pages/mainPage.page';
+import { test, expect } from '../fixtures/fixture';
+import { Locator } from 'playwright';
 
-let footer: Footer;
-let navBar: NavBar;
-let mainPage: MainPage;
 
 test.describe('Footer check', () => {
-    test.beforeEach(async ({ page }) => {
-        footer = new Footer(page);
-        mainPage = new MainPage(page);
-        navBar = new NavBar(page);
-
+    test.beforeEach(async ({ mainPage }) => {
         await mainPage.openUrl();
     });
 
-    test("C214 - Verify that all elements on the footer are displayed and all links are clickable", async () => {
+    test("C214 - Verify that all elements on the footer are displayed and all links are clickable", async ({ mainPage, footer, navBar }) => {
         async function clickFooterLinkAndVerify(clickMethod: () => Promise<void>, getLinkMethod: () => Promise<Locator>, urlRegex: RegExp, check: 'placeholder' | 'title', expectedText: string) {
             await footer.scrollToFooter();
             await clickMethod();
@@ -24,7 +15,7 @@ test.describe('Footer check', () => {
             await expect(await getLinkMethod()).toBeVisible();
             if (check === 'placeholder') {
                 await expect(await getLinkMethod()).toHaveAttribute('placeholder', expectedText);
-                await navBar.clickLogo();
+                await navBar.clickElement('logo');
 
             } else {
                 await expect(await getLinkMethod()).toHaveText(expectedText);
@@ -56,7 +47,7 @@ test.describe('Footer check', () => {
         await clickFooterLinkAndVerify(() => footer.clickAdvertismentsLink(), () => navBar.getAdvertismentsSearchInput(), /products/, 'placeholder', 'Пошук оголошень або послуг');
         await clickFooterLinkAndVerify(() => footer.clickTendersLink(), () => navBar.getTendersJobRequestsSearchInput(), /tenders-map/, 'placeholder', 'Пошук тендера за ключовими словами');
         await clickFooterLinkAndVerify(() => footer.clickJobRequestsLink(), () => navBar.getTendersJobRequestsSearchInput(), /requests-map/, 'placeholder', 'Пошук запита на роботу за ключовими словами');
-        await navBar.clickLogo();
+        await navBar.clickElement('logo');
         await expect(await mainPage.getPageTitle()).toBeVisible();
         await footer.scrollToFooter();
         await expect(await footer.getEmail()).toHaveAttribute('href', /mailto/);

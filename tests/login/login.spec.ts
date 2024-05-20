@@ -5,10 +5,10 @@ const userLoginCredentials = {
     "phoneNumber": String(process.env.USER_PHONE_NUMBER),
     "password": String(process.env.USER_PASSWORD)
 }
-const actions: ('click' | 'pressEnter')[] = ['click', 'pressEnter'];
+const actions = ['click', 'pressEnter'] as const;
 
 async function verifyNotLoggedIn(navBar: pages["navBar"], loginPopUp: pages["loginPopUp"]) {
-    await expect(navBar.getNavBarItem('loginBtn')).toBeVisible();
+    await expect(navBar.getNavbarItem('loginBtn')).toBeVisible();
     await expect(loginPopUp.getLoginContainer()).toBeVisible();
 }
 
@@ -22,7 +22,7 @@ async function verifyLoginFormFieldWithoutError(loginPopUp: pages["loginPopUp"],
 }
 
 async function verifyLoggedIn(navBar: pages["navBar"], loggedInEmail: string) {
-    await expect(navBar.getNavBarItem('avatarIcon')).toBeVisible();
+    await expect(navBar.getNavbarItem('avatarIcon')).toBeVisible();
     await navBar.clickNavbarItem('avatarIcon');
     await expect(navBar.getProfileDropdown()).toBeVisible();
     await expect(navBar.getProfileDropdownEmail()).toHaveText(loggedInEmail);
@@ -30,7 +30,7 @@ async function verifyLoggedIn(navBar: pages["navBar"], loggedInEmail: string) {
 
 test.describe('Login functionality check', () => {
     test.beforeEach(async ({ navBar, loginPopUp, telegramPopUp }) => {
-        await telegramPopUp.closeTelegramPopUp();
+        await telegramPopUp.closeTelegramPopUpViaLocatorHandler();
         await navBar.openUrl();
         await navBar.clickNavbarItem('loginBtn');
         await expect(loginPopUp.getLoginContainer()).toBeVisible();

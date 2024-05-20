@@ -6,6 +6,13 @@ const servicesItems = '*[data-testid*="service__"]';
 const vehiclesSectionWrapper = '*[data-testid="specialEquipment"]';
 const vehiclesTabs = '*[data-testid*="specialEquipment__"]';
 const vehiclesItems = '*[data-testid*="category__"]';
+const pageTitle = '[class*="HeroSection_title"]';
+const consultationForm = '*[class*="ConsultationForm_container"]';
+const orderConsultationBtn = '*[class*="ConsultationForm_container"] button';
+const feedbackNameInput = '*[class*="ConsultationForm_name"] input';
+const feedbackPhoneInput = '*[class*="ConsultationForm_phone"] input';
+const feedbackNameErrorMsg = '*[class*="ConsultationForm_name"] *[class*="ConsultationForm_error_message"]';
+const feedbackPhoneErrorMsg= '*[class*="ConsultationForm_phone"] *[class*="ConsultationForm_error_message"]';
 
 export class MainPage extends Page {
     constructor(page: Page['page'], public isMobile: boolean) {
@@ -88,63 +95,50 @@ export class MainPage extends Page {
                 throw new Error(`Unsupported section name: ${sectionName}`);
         }
     }
+
+    async clickFeedbackPhoneInput() {
+    await super.clickElement(feedbackPhoneInput);
 }
-//const pageTitle: string = '[class*="HeroSection_title"]';
-// const consultationForm: string = '*[class*="ConsultationForm_container"]';
-// const orderConsultationBtn: string = '*[class*="ConsultationForm_container"] button';
-// const feedbackNameInput: string = 'div[class*="ConsultationForm_name"] input';
-// const feedbackPhoneInput: string = 'div[class*="ConsultationForm_phone"] input';
-// const feedbackNameErrorMsg: string = 'div[class*="ConsultationForm_name"] *[class*="ConsultationForm_error_message"]';
-// const feedbackPhoneErrorMsg: string = 'div[class*="ConsultationForm_phone"] *[class*="ConsultationForm_error_message"]';
 
+    async getPageTitle() {
+        return super.getElement(pageTitle);
+    }
 
+    async getConsultationForm() {
+        return super.getElement(consultationForm);
+    }
 
+    async getFeedbackNameInput() {
+        return super.getElement(feedbackNameInput);
+    }
 
-// async clickFeedbackPhoneInput() {
-//     await super.clickElement(feedbackPhoneInput);
-// }
+    async getFeedbackNameErrorMsg() {
+        return super.getElement(feedbackNameErrorMsg);
+    }
 
-//     async getPageTitle() {
-//         return super.getElement(pageTitle);
-//     }
+    async getFeedbackPhoneInput() {
+        return super.getElement(feedbackPhoneInput);
+    }
 
-//     async getConsultationForm() {
-//         return super.getElement(consultationForm);
-//     }
+    async getFeedbackPhoneErrorMsg() {
+        return super.getElement(feedbackPhoneErrorMsg);
+    }
 
-//     async getFeedbackNameInput() {
-//         return super.getElement(feedbackNameInput);
-//     }
+    async orderConsultation(options?: { name?: string, phone?: string }) {
+        const { name, phone } = options ?? {};
 
-//     async getFeedbackNameErrorMsg() {
-//         return super.getElement(feedbackNameErrorMsg);
-//     }
+        if (name !== undefined) {
+            await super.fillElement(feedbackNameInput, name);
+        }
 
-//     async getFeedbackPhoneInput() {
-//         return super.getElement(feedbackPhoneInput);
-//     }
+        if (phone !== undefined) {
+            await super.fillElement(feedbackPhoneInput, phone);
+        }
 
-//     async getFeedbackPhoneErrorMsg() {
-//         return super.getElement(feedbackPhoneErrorMsg);
-//     }
+        await super.clickElement(orderConsultationBtn);
+    }
 
-//     async orderConsultation(options?: { name?: string, phone?: string }) {
-//         const { name, phone } = options ?? {};
-
-//         if (name !== undefined) {
-//             await super.fillElement(feedbackNameInput, name);
-//         }
-
-//         if (phone !== undefined) {
-//             await super.fillElement(feedbackPhoneInput, phone);
-//         }
-
-//         await super.clickElement(orderConsultationBtn);
-//     }
-
-//     async scrollToConsultationForm() {
-//         await super.scrollToElement(consultationForm);
-//     }
-
-
-// }
+    async scrollToConsultationForm() {
+        await super.scrollToElement(consultationForm);
+    }
+}

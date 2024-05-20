@@ -1,5 +1,7 @@
-import { Locator, expect } from '@playwright/test';
+import { expect } from '@playwright/test';
 import { Page as PlaywrightPage } from 'playwright';
+
+const loaderIcon = '*[data-testid="preloader"]';
 
 export default class Page {
 
@@ -9,6 +11,10 @@ export default class Page {
 
   async openUrl(url: string = '/') {
     await this.page.goto(url, { waitUntil: 'load' });
+  }
+
+  async waitForPageLoad() {
+    (await this.getElementsCount(loaderIcon) > 0) && await this.waitForSelector(loaderIcon, 'detached');
   }
 
   // async addLocatorHandler(element: Locator, action: void) {
@@ -45,16 +51,20 @@ export default class Page {
     return this.page.locator(locator).all();
   }
 
+  async getElementsArrayTexts(locator: string) {
+    return this.page.locator(locator).allTextContents();
+  }
+
   async getElementText(locator: string) {
-    return this.page.locator(locator).textContent();
+    return await this.page.locator(locator).textContent();
   }
 
   async getElementValue(locator: string) {
     return await this.page.locator(locator).inputValue();
   }
 
-  async clickElement(locator: string) {
-    await this.getElement(locator).click();
+  async clickElement(locator: string, force: boolean = false) {
+    await this.getElement(locator).click({ force });
   }
 
   async clickElementByIndex(locator: string, index: number) {
@@ -93,8 +103,16 @@ export default class Page {
     await this.getElement(locator).clear();
   }
 
-  async hoverElementByIndex(locator: string, ind: number) {
-    await (await this.getElementByIndex(locator, ind)).hover();
+  async clearElementByCharacter(locator: string) {
+    const valueLength = (await this.getElementValue(locator)).length;
+    for (let i = 0; i < valueLength; i++) {
+      await this.getElement(locator).press('ArrowRight');
+      await this.getElement(locator).press('Backspace');
+    }
+  }
+
+  async hoverElementByLocatorAndText(locator: string, text: string) {
+    await (this.getElementByLocatorAndText(locator, text)).hover();
   }
 
   async refresh() {
@@ -103,6 +121,10 @@ export default class Page {
 
   async focus(locator: string) {
     await this.getElement(locator).focus();
+  }
+
+  async unfocus(locator: string) {
+    await this.getElement(locator).blur();
   }
 
   async checkFrameElement(frameLocator: string, elementLocator: string) {
@@ -145,8 +167,12 @@ export default class Page {
     await this.page.waitForResponse(resp => resp.url().includes(url) && resp.status() === status);
   }
 
-  async waitForSelector(selector: string, state: 'detached') {
+  async waitForSelector(selector: string, state: 'detached' | 'visible' | 'attached') {
     await this.page.waitForSelector(selector, { state: state })
+  }
+
+  async waitforUrl(url: string = '') {
+    await this.page.waitForURL(url);
   }
 
   //mobile gestures

@@ -1,5 +1,6 @@
 import Page from './page';
 
+const title = '*[class*="OwnerUnitsPage_title"]';
 const emptyBlockTitle: string = 'div[class*="EmptyBlockInfo_title"]';
 const emptyBlockDescription: string = 'div[class*="EmptyBlockInfo_descr"]';
 const createUnitBtn: string = 'button[data-testid="emptyBlockButton"]';
@@ -21,6 +22,10 @@ const unitCardName = (unitName: string): string => `//div[contains(@class, "Owne
 export class MyUnitsPage extends Page {
     constructor(page: Page['page']) {
         super(page);
+    }
+
+    getTitle() {
+        return super.getElement(title);
     }
 
     getEmptyBlockTitle() {

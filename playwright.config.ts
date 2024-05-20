@@ -5,20 +5,18 @@ dotenv.config();
 
 export default defineConfig({
   testDir: './tests',
-  testMatch: ['tests/sections/sections.spec.ts'],
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  workers: 3,
-  //workers: process.env.CI ? 1 : undefined,
-  timeout: 1200000,
-  reporter: [['dot']],// ['allure-playwright']],
+  workers: process.env.CI ? 1 : undefined,
+  timeout: 120000,
+  reporter: [['dot']],
   use: {
 
     baseURL: 'https://stage.rentzila.com.ua/',
     screenshot: 'off',
     video: 'off',
-    trace: 'on',
+    trace: 'retain-on-failure',
     headless: true,
     locale: 'uk-UA',
     timezoneId: 'Europe/Kiev'
@@ -31,7 +29,7 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         isMobile: false
       },
-      testIgnore: ['sections-mobile.spec.ts']
+      testIgnore: ['**-mobile.spec.ts']
     },
     {
       name: 'Iphone 14 Pro Max',
@@ -40,7 +38,7 @@ export default defineConfig({
         isMobile: true,
         hasTouch: true
       },
-      testMatch: ['sections-mobile.spec.ts']
+      testMatch: ['**-mobile.spec.ts']
     }
 
     // {

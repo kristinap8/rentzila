@@ -350,7 +350,7 @@ export class MyProfile extends Page {
      * @param {string} [fieldToSkip] - The name of the field to skip (optional).
      */
     async fillMyProfileFormWithRndData(dataGenerator: helpers["dataGenerator"], fieldToSkip?: 'surname' | 'name' | 'patronymic' | 'city' | 'viber' | 'telegram') {
-        const profileFields: ('surname' | 'name' | 'patronymic' | 'city' | 'viber' | 'telegram')[] = ['surname', 'name', 'patronymic', 'city', 'viber', 'telegram'];
+        const profileFields = ['surname', 'name', 'patronymic', 'city', 'viber', 'telegram'] as const;
         let newProfileData: { fieldName: string; inputValue: string; }[] = [];
         for (let profileField of profileFields) {
             if (profileField !== fieldToSkip) {

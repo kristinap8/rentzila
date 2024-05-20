@@ -23,7 +23,7 @@ test.describe("Tender operations check", async () => {
         expect(response.status()).toBe(201);
 
         await myTenders.openUrl(endpoints.myTenders);
-        await loginPopUp.login(userLoginData.email, userLoginData.password);
+        await loginPopUp.login({ emailPhone: userLoginData.email, password: userLoginData.password });
         await telegramPopUp.closeTelegramPopUp();
 
         await checkTenderResults(myTenders, "expecting");
@@ -45,11 +45,11 @@ test.describe("Tender operations check", async () => {
         await checkTenderResults(myTenders, "rejected");
     })
 
-    test("Close the tender", async ({ myTenders, closeTenderPopUp, navBar }) => {
+    test("Close the tender", async ({ myTenders, closeTenderPopUp, notificationPopUp }) => {
         await myTenders.clickBtn("close");
         expect(closeTenderPopUp.getTitle()).toHaveText(myTendersData.finishTenderPopupTitle);
         await closeTenderPopUp.clickCloseBtn();
-        await expect(navBar.getNotificationPopUpTitle()).toHaveText(myTendersData.notificationMsg.finish);
+        await expect(notificationPopUp.getNotificationPopUpMsg()).toHaveText(myTendersData.notificationMsg.finish);
         await checkTenderResults(myTenders, "finished");
     })
 
@@ -64,13 +64,12 @@ test.describe("Tender operations check", async () => {
     test("Delete the tender via API", async ({ tenderApiHelper }) => {
         let response = await tenderApiHelper.closeTender(tenderData.id);
         expect(response.status()).toBe(202);
-        response = await tenderApiHelper.deleteTender(tenderData.id);
-        expect(response.status()).toBe(204);
+        await tenderApiHelper.deleteTender(tenderData.id);
         response = await tenderApiHelper.getTender(tenderData.id);
         expect(response.status()).toBe(404);
     })
 
-    test("Delete the tender", async ({ tenderApiHelper, myTenders, deleteTenderPopUp, navBar }) => {
+    test("Delete the tender", async ({ tenderApiHelper, myTenders, deleteTenderPopUp, notificationPopUp }) => {
         const response = await tenderApiHelper.closeTender(tenderData.id);
         expect(response.status()).toBe(202);
 
@@ -79,7 +78,7 @@ test.describe("Tender operations check", async () => {
         await myTenders.clickBtn("delete");
         await expect(deleteTenderPopUp.getTitle()).toHaveText(myTendersData.deleteTenderPopupTitle);
         await deleteTenderPopUp.clickDeleteBtn();
-        await expect(navBar.getNotificationPopUpTitle()).toHaveText(myTendersData.notificationMsg.delete);
+        await expect(notificationPopUp.getNotificationPopUpMsg()).toHaveText(myTendersData.notificationMsg.delete);
         await expect(myTenders.getNonFoundTenderTitle()).toHaveText(myTendersData.nonFoundTendersMsg.replace("{name}", tenderData.name));
     })
 
@@ -87,8 +86,7 @@ test.describe("Tender operations check", async () => {
         let response = await tenderApiHelper.getTender(tenderData.id);
         const isTenderExist = response.status() === 200;
         if (isTenderExist) {
-            response = await tenderApiHelper.deleteTender(tenderData.id);
-            expect(response.status()).toBe(204);
+            await tenderApiHelper.deleteTender(tenderData.id);
         }
     })
 })

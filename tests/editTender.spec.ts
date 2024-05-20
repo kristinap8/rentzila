@@ -80,7 +80,6 @@ test.describe('Edit tender functionality check', () => {
         for (const invalidAdditionalInfo of editTenderData.invalidAdditionalInfo.withRestrictedSymbol) {
             await fillAndCheckEnteredValue(editTender, 'additionalInfo', invalidAdditionalInfo, invalidAdditionalInfo.length - 1);
         }
-        await fill
     })
 
     test.afterEach(async ({ tenderApiHelper }) => {

@@ -14,8 +14,9 @@ const hidePasswordIcon = '*[data-testid="loginPopup"] *[data-testid="reactHookBu
 
 
 export class LoginPopUp extends Page {
-    constructor(page: Page['page']) {
+    constructor(page: Page['page'], public isMobile: boolean) {
         super(page);
+        this.isMobile = isMobile;
     }
 
     getLoginContainer() {
@@ -51,66 +52,23 @@ export class LoginPopUp extends Page {
     }
 
     async clickHidePasswordIcon() {
-        await super.clickElement(hidePasswordIcon);
+        (this.isMobile) ? await super.tapElement(hidePasswordIcon) : await super.clickElement(hidePasswordIcon);
     }
 
     async login({ emailPhone = '', password = '', action = 'click' }: { emailPhone?: string, password?: string, action?: 'click' | 'noClick' | 'pressEnter' }) {
         emailPhone && await super.fillElement(emailPhoneInput, emailPhone);
         password && await super.fillElement(passwordInput, password);
 
-        (action === "click") && await super.clickElement(loginBtn);
+        if (action === "click") {
+            (this.isMobile) ? await super.tapElement(loginBtn) : await super.clickElement(loginBtn);
+        }
         if (action === "pressEnter") {
             await super.focus(emailPhoneInput);
             await super.pressEnter();
         }
     }
 
-
-    // else if (action === 'pressEnter') {
-    //     ;
-    //     ;
-    // }
-    // }
-
-    // async fillEmailPhoneInput(emailPhone: string) {
-    //     await super.fillElement(emailPhoneInput, emailPhone);
-    // }
-
-
-
-    // async fillPasswordInput(password: string) {
-    //     await super.fillElement(passwordInput, password);
-    // }
-
-
-
-    // async clickCrossBtn() {
-    //     await this.clickElement(crossBtn);
-    // }
-
-    // async login(emailPhone = '', password = '', action: 'click' | 'pressEnter' | 'noClick' = 'click') {
-    //     emailPhone && await super.fillElement(emailPhoneInput, emailPhone);
-    //     password && await super.fillElement(passwordInput, password);
-
-    //     if (action === 'click') {
-    //         await Promise.all([
-    //             super.waitForSelector(loginContainer, 'detached'),
-    //             super.clickElement(loginBtn)
-    //         ])
-    //     } 
-    //     // else if (action === 'pressEnter') {
-    //     //     await super.focus(emailPhoneInput);
-    //     //     await super.pressEnter();
-    //     // }
-    // }
-
-    // async clickLoginBtn() {
-    //     await super.clickElement(loginBtn);
-    // }
-
-
-
-    // async focusPasswordInput() {
-    //     await this.focus(passwordInput);
-    // }
+    async waitLoginPopToClose() {
+        await super.waitForSelector(loginContainer, 'detached');
+    }
 }

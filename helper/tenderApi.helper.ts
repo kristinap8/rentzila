@@ -33,8 +33,8 @@ class TenderApiHelper extends ApiHelper {
 
     public async getTenderIdByName(tenderName: string) {
         const response = await (await this.apiContext).get(`tenders/`);
-        if(response.status() !== 200) {
-            throw new Error(`Failed to get all tenders`); 
+        if (response.status() !== 200) {
+            throw new Error(`Failed to get all tenders`);
         }
         const tenderId = (await response.json()).tenders.find(tender => tender.name === tenderName).id;
         return tenderId;
@@ -72,7 +72,10 @@ class TenderApiHelper extends ApiHelper {
             data: await this.generateTenderData(),
             headers: { 'Authorization': `Bearer ${this.userAccessToken}` }
         });
-        return response;
+        if (response.status() !== 201) {
+            throw new Error(`Failed to create tender, status: ${response.status()}`);
+        }
+        return await response.json();
     }
 
     public async addTenderAttachment(tenderId: number) {
@@ -89,6 +92,9 @@ class TenderApiHelper extends ApiHelper {
                 attachment_file: stream
             }
         });
+        if (response.status() !== 201) {
+            throw new Error(`Failed to add attachment to tender, status: ${response.status()}`);
+        }
         return response;
     }
 
@@ -122,8 +128,8 @@ class TenderApiHelper extends ApiHelper {
         const response = await (await this.apiContext).delete(`crm/tenders/${tenderId}/`, {
             headers: { 'Authorization': `Bearer ${this.adminAccessToken}` }
         });
-        if(response.status() !== 204) {
-            throw new Error(`Failed to delete the tender`); 
+        if (response.status() !== 204) {
+            throw new Error(`Failed to delete the tender`);
         }
     }
 }

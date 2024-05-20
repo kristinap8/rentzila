@@ -8,6 +8,7 @@ const userLoginData = {
     email: String(process.env.USER_EMAIL),
     password: String(process.env.USER_PASSWORD)
 };
+const dirName = 'editUnitData';
 /**
  * Verifies the success message and notification after editing a unit. 
  * Checks if the edited unit is moved from the active tab to the pending tab.
@@ -93,20 +94,16 @@ async function verifyEditedUnitData(unitDetailsPage: any, field: 'category' | 'm
 test.describe("Edit unit functionality check", async () => {
     test.beforeEach(async ({ unitApiHelper, telegramPopUp, loginPopUp, myUnitsPage }) => {
         //Navigate to My Advertisments page and login as a user
-        await myUnitsPage.openUrl(endpoints.myAdvertisments);
-        await loginPopUp.login(userLoginData.email, userLoginData.password);
+        await myUnitsPage.openUrl(endpoints.myUnits);
+        await loginPopUp.login({ emailPhone: userLoginData.email, password: userLoginData.password });
         await telegramPopUp.closeTelegramPopUp();
 
         // Creation of unit using API
-        let response = await unitApiHelper.createUnit();
-        expect(response.status()).toBe(201);
-        createdUnitData = await response.json();
-        response = await unitApiHelper.addUnitImage(createdUnitData.id);
-        expect(response.status()).toBe(201);
+        let createdUnit = await unitApiHelper.createUnit();
+        await unitApiHelper.addUnitImage(createdUnit.id, dirName, 'vehicle.jpg');
 
         // Approval of unit using API
-        response = await unitApiHelper.approveUnit(createdUnitData.id);
-        expect(response.status()).toBe(200);
+        await unitApiHelper.approveUnit(createdUnitData.id);
 
         await myUnitsPage.refresh();
         await myUnitsPage.clickTab('active');
@@ -239,14 +236,5 @@ test.describe("Edit unit functionality check", async () => {
         await verifyUnitEditing(navBar, editUnit, myUnitsPage, createdUnitData.name);
         await myUnitsPage.clickUnitCard(createdUnitData.name);
         await verifyEditedUnitData(unitDetailsPage, 'description', createdUnitData);
-    });
-    test('Check "Місце розташування технічного засобу" functionality', async ({ myUnitsPage, editUnit, mapPopUp }) => {
-        await myUnitsPage.clickEditBtn(createdUnitData.name);
-
-        await editUnit.clickChooseOnMapBtn();
-        await expect.soft(mapPopUp.getMapZoom()).toHaveAttribute('style', '');
-       // await expect.soft(mapPopUp.getMapZoom()).toHaveAttribute('style', '');
-        console.log((await mapPopUp.getMapZoom().getAttribute('style'))!.match(/scale\((\d+)\)/));
-        console.log('');
     });
 });

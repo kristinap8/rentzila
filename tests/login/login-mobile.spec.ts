@@ -5,7 +5,7 @@ const userLoginCredentials = {
     "phoneNumber": String(process.env.USER_PHONE_NUMBER),
     "password": String(process.env.USER_PASSWORD)
 }
-const actions: ('click' | 'pressEnter')[] = ['click', 'pressEnter'];
+const actions = ['click', 'pressEnter'] as const;
 
 async function verifyLoginFormFieldError(loginPopUp: pages["loginPopUp"], loginFormData: testData["loginFormData"], field: 'emailPhone' | 'password', errorMsg: string) {
     await expect(loginPopUp.getLoginFormInput(field)).toHaveClass(RegExp(loginFormData["fieldsErrorClasses"][field]));
@@ -35,7 +35,7 @@ async function logout(navBar: pages["navBar"], ownCabinetLeftSideMenu: pages["ow
 
 test.describe('Login functionality check', () => {
     test.beforeEach(async ({ navBar, loginPopUp, telegramPopUp }) => {
-        await telegramPopUp.closeTelegramPopUp();
+        await telegramPopUp.closeTelegramPopUpViaLocatorHandler();
         await loginPopUp.openUrl();
         await openLoginPopUp(navBar, loginPopUp);
     });

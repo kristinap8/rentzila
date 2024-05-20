@@ -322,7 +322,7 @@ test.describe('Create tender functionality check', () => {
 
         await myTenders.goToTendersTab('expecting');
         createdTenderName = enteredData.find(item => item.input === 'tenderName').value;
-        await myTenders.searchUnit(createdTenderName);
+        await myTenders.searchTender(createdTenderName);
         await expect(myTenders.getTenderCards()).toHaveCount(1);
         expect(await myTenders.getTenderCardInfo('serviceName')).toEqual(enteredData.find(item => item.input === 'serviceName').value);
         expect(await myTenders.getTenderCardInfo('declaredBudget')).toEqual(enteredData.find(item => item.input === 'declaredBudget').value);

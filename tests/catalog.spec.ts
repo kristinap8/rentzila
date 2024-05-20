@@ -27,7 +27,7 @@ async function returnToMainPage(navBar: pages["navBar"]) {
 
 test.describe('Catalog menu check', () => {
     test.beforeEach(async ({ navBar, telegramPopUp }) => {
-        await telegramPopUp.closeTelegramPopUp();
+        await telegramPopUp.closeTelegramPopUpViaLocatorHandler();
         await navBar.openUrl();
         await expect(navBar.getNavbarItem('logo')).toBeVisible();
     });

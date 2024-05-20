@@ -9,9 +9,13 @@ export class TelegramPopUp extends Page {
         this.isMobile = isMobile;
     }
 
-    async closeTelegramPopUp() {
+    async closeTelegramPopUpViaLocatorHandler() {
         await this.page.addLocatorHandler(super.getElement(telegramPopUp), async () => {
             this.isMobile ? await super.tapElement(telegramCrossIcon) : await super.clickElement(telegramCrossIcon);
         });
+    }
+
+    async closeTelegramPopUp() {
+        await super.clickElement(telegramCrossIcon);
     }
 }

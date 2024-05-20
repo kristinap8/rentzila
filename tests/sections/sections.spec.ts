@@ -44,7 +44,7 @@ async function checkSection(mainPage: pages["mainPage"], navBar: pages["navBar"]
 
 test.describe('Sections check', () => {
     test.beforeEach(async ({ mainPage, telegramPopUp }) => {
-        await telegramPopUp.closeTelegramPopUp();
+        await telegramPopUp.closeTelegramPopUpViaLocatorHandler();
         await mainPage.openUrl();
     });
 

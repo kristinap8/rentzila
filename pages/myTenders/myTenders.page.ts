@@ -1,28 +1,62 @@
 import Page from '../page';
+import Helper from '../../helper/helper';
 
-const createTenderBtnWithoutTenders: string = 'button[data-testid="emptyBlockButton"]';
-const createTenderBtnWithTenders: string = 'button[class*="OwnerTendersPage_addUnit"]';
-const activeTendersTab: string = 'button[id*="Активні"]';
-const finishedTendersTab: string = 'button[id*="Завершені"]';
-const expectingTendersTab: string = 'button[id*="Очікуючі"]';
-const rejectedTendersTab: string = 'button[id*="Відхилені"]';
-const searchInput: string = 'div[data-testid="search"] input';
-const tenderCards: string = 'div[class*="OwnerTenderCard_tenderCard"]';
-const closeBtn: string  = '//button[contains(@data-testid, "customButton")][text()="Завершити"]';
-const deleteBtn: string = '//button[contains(@data-testid, "customButton")][text()="Видалити"]';
-const nonFoundTenderTitle: string = 'div[class*="EmptyBlockInfo_title"]';
+const createTenderBtnWithoutTenders = 'button[data-testid="emptyBlockButton"]';
+const createTenderBtnWithTenders = 'button[class*="OwnerTendersPage_addUnit"]';
+const activeTendersTab = 'button[id*="Активні"]';
+const finishedTendersTab = 'button[id*="Завершені"]';
+const expectingTendersTab = 'button[id*="Очікуючі"]';
+const rejectedTendersTab = 'button[id*="Відхилені"]';
+const searchInput = '*[data-testid="search"] input';
+const tenderCards = '*[class*="OwnerTenderCard_tenderCard"]';
+const closeBtn = '//button[contains(@data-testid, "customButton")][text()="Завершити"]';
+const deleteBtn = '//button[contains(@data-testid, "customButton")][text()="Видалити"]';
+const editBtn = '//button[contains(@data-testid, "customButton")][text()="Редагувати"]';
+const nonFoundTenderTitle = '*[class*="EmptyBlockInfo_title"]';
 
+const tenderCardDeclaredBudget = '*[class*="CurrentItemPrice_price__"]';
+const tenderCardCategoryAndService = '*[class*="CurrentItemInfo_category"]';
+const tenderCardWorksExecutionPeriod = '(//*[contains(@class, "ParagraphWithIcon_paragraph__")])[1]';
+const tenderCardWorksLocation = '(//*[contains(@class, "ParagraphWithIcon_paragraph__")])[2]';
+
+let helper: Helper;
 export class MyTenders extends Page {
     constructor(page: Page['page']) {
         super(page);
+        helper = new Helper();
     }
 
     getTenderCards() {
         return super.getElement(tenderCards);
     }
 
+    async getTenderCardInfo(infoType: 'declaredBudget' | 'serviceName' | 'worksExecutionPeriod' | 'worksLocation') {
+        switch (infoType) {
+            case 'declaredBudget':
+                return Number(helper.removeSpaces((await super.getElementText(tenderCardDeclaredBudget))!));
+            case 'serviceName': 
+                return (await super.getElementText(tenderCardCategoryAndService))!.split('/')[1].trim();
+            case 'worksExecutionPeriod':
+                return (await super.getElementText(tenderCardWorksExecutionPeriod))!.split(' - ');
+            case 'worksLocation':
+                return (await super.getElementText(tenderCardWorksLocation))!.split(', ')[0];
+            default:
+                throw new Error(`Unsupported info type of the tender card: ${infoType}`);
+                
+        }
+    }
+
     getNonFoundTenderTitle() {
         return super.getElement(nonFoundTenderTitle);
+    }
+
+    getTendersTab(tabName: "expecting") {
+        switch (tabName) {
+            case 'expecting':
+                return super.getElement(tabName);
+            default:
+                throw new Error(`Unsupported tab name: ${tabName}`);
+        }
     }
 
     async clickCreateTenderBtn() {
@@ -30,13 +64,19 @@ export class MyTenders extends Page {
         await super.clickElement(btnToClick);
     }
 
-    async clickBtn(btnName: "close" | "delete") {
+    async clickBtn(btnName: "close" | "delete" | "edit") {
         switch (btnName) {
             case "close":
                 await super.clickElement(closeBtn);
                 break;
             case "delete":
                 await super.clickElement(deleteBtn);
+                break;
+            case "edit":
+                await Promise.all([
+                    super.waitForLoadState('networkidle'),
+                    super.clickElement(editBtn)
+                ]);
                 break;
             default:
                 throw new Error(`Non valid button name: ${btnName}`);
@@ -63,6 +103,10 @@ export class MyTenders extends Page {
     }
 
     async fillSearchInput(tenderName: string) {
+        await super.fillElement(searchInput, tenderName);
+    }
+
+    async searchTender(tenderName: string) {
         await super.fillElement(searchInput, tenderName);
     }
 }

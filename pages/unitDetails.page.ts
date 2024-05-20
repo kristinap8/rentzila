@@ -1,23 +1,36 @@
 import Page from './page';
 
-const services: string = '*[class*="UnitCharacteristics_service__"]';
-const category: string = '//*[contains(@class, "UnitCharacteristics_characteristics_title") and text()="Категорія"]/../*[contains(@class,"UnitCharacteristics_characteristics_info")]';
-const manufacturer: string = 'div[itemprop="manufacturer"] div[class*="UnitCharacteristics_characteristics_info"]';
-const model: string = 'div[itemprop="model"] div[class*="UnitCharacteristics_characteristics_info"]';
-const technicalFeatures: string = 'div[itemprop="features"] div[class*="UnitCharacteristics_characteristics_info"]';
-const description: string = 'div[class*="UnitDescription_content"]';
-const location: string = 'div[class*="UnitPlace_currentPlace"] span';
-const paymentMethod: string = 'div[class*="ImageWithDescription_paymentMethod"]';
-const minimalPrice: string = 'div[class*="ImageWithDescription_price_wrapper"] div[class*="ImageWithDescription_price"]';
-const unitName: string = '*[class*="UnitName_name"]';
-const editUnitBtn: string = '*[data-testid="unitButtons"] button:nth-of-type(1)';
+const services = '*[class*="UnitCharacteristics_service__"]';
+const category = '//*[contains(@class, "UnitCharacteristics_characteristics_title") and text()="Категорія"]/../*[contains(@class,"UnitCharacteristics_characteristics_info")]';
+const model = '*[itemprop="model"] div[class*="UnitCharacteristics_characteristics_info"]';
+const technicalFeatures = 'div[itemprop="features"] div[class*="UnitCharacteristics_characteristics_info"]';
+const description = 'div[class*="UnitDescription_content"]';
+const location = 'div[class*="UnitPlace_currentPlace"] span';
+const paymentMethod = 'div[class*="ImageWithDescription_paymentMethod"]';
+const minimalPrice = 'div[class*="ImageWithDescription_price_wrapper"] div[class*="ImageWithDescription_price"]';
+const unitName = '*[class*="UnitName_name"]';
+const editUnitBtn = '*[data-testid="unitButtons"] button:nth-of-type(1)';
+const manufacturer = '*[itemprop="manufacturer"] *[class*="UnitCharacteristics_characteristics_info"]';
 
 export class UnitDetailsPage extends Page {
     constructor(page: Page['page']) {
         super(page);
     }
 
-    getServices() {
+    getUnitInfo(infoName: 'services') {
+        switch (infoName) {
+            case 'services':
+                return super.getElement(services);
+            default:
+                throw new Error(`Unsupported unit info name: ${infoName}`);   
+        }
+    }
+
+   async getCategoryText() {
+        return await super.getElementText(category);
+    }
+
+        getServices() {
         return super.getElement(services);
     }
 
@@ -27,10 +40,6 @@ export class UnitDetailsPage extends Page {
 
     getCategory() {
         return super.getElement(category);
-    }
-
-    async getCategoryText() {
-        return await super.getElementText(category);
     }
 
     getManufacturer() {
@@ -71,22 +80,4 @@ export class UnitDetailsPage extends Page {
             super.clickElement(editUnitBtn)
         ]);
     }
-
-
-    // name: string;
-    // model_name: string;
-    // description: string;
-    // features: string;
-    // type_of_work: string;
-    // time_of_work: string;
-    // phone: string;
-    // minimal_price: number;
-    // money_value: string;
-    // payment_method: string;
-    // lat: number;
-    // lng: number;
-    // manufacturer: number;
-    // owner: number;
-    // category: number;
-    // services: number[];
 }

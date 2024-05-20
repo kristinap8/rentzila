@@ -1,0 +1,70 @@
+{
+    "invalidTenderNames": {
+        "less": "Tender na",
+        "withRestrictedSymbol": [
+            "Tender name <",
+            "Tender name >",
+            "Tender name {",
+            "Tender name }",
+            "Tender name ;",
+            "Tender name ^"
+        ],
+        "exceeding": {
+            "data": "TendernameTendernameTendernameTendernameTendernameTendernameTendername1",
+            "allowedLength": 70
+        }
+    },
+    "serviceName": "Прибирання",
+    "invalidDeclaredBudgets": {
+        "restrictedSymbols": [
+            "\"",
+            "`",
+            "<",
+            ">",
+            "{",
+            "}",
+            ";",
+            "^"
+        ],
+        "exceeding": {
+            "data": "9999999991",
+            "allowedLength": 9
+        }
+    },
+    "invalidAdditionalInfo": {
+        "less": "Цей тендер надає послуги з перевезення.",
+        "withRestrictedSymbol": [
+            "Цей тендер надає послуги з перевезення урожаю <",
+            "Цей тендер надає послуги з перевезення урожаю >",
+            "Цей тендер надає послуги з перевезення урожаю {",
+            "Цей тендер надає послуги з перевезення урожаю }",
+            "Цей тендер надає послуги з перевезення урожаю ^",
+            "Цей тендер надає послуги з перевезення урожаю ;"
+        ]
+    },
+    "fieldsErrorClasses": {
+        "tenderName": "inputError",
+        "serviceName": "searchResultError",
+        "declaredBudget": "inputError",
+        "additionalInfo": "textAreaError"
+    },
+    "fieldsMsgs": {
+        "tenderName": {
+            "empty": "Назва має містити щонайменше 10 символів",
+            "less": "Назва має містити щонайменше 10 символів"
+        },
+        "serviceName": {
+            "empty": "Це поле обов’язкове"
+        },
+        "declaredBudget": {
+            "empty": "Це поле обов’язкове"
+        },
+        "additionalInfo": {
+            "empty": "Опис має містити щонайменше 40 символів (0)",
+            "less": "Опис має містити щонайменше 40 символів (39)"
+        },
+        "documents": {
+            "empty": "Додайте до вашого тендеру як мінімум один файл"
+        }
+    }
+}

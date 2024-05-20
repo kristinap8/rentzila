@@ -15,14 +15,14 @@ export class ProposalDetails extends Page {
     }
 
     async getRentPeriod() {
-        return await super.getElement(rentPeriod);
+        return super.getElement(rentPeriod);
     }
 
     async getAdditionalFileNames() {
-        return await super.getElement(additionalFileNames);
+        return super.getElement(additionalFileNames);
     }
 
     async getProposalComment() {
-        return await super.getElement(proposalComment);
+        return super.getElement(proposalComment);
     }
 }

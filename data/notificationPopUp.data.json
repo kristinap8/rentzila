@@ -1,5 +1,9 @@
 {
-    "notificationMsgs": {
-        "editMyProfile": "Ви успішно відредагували профіль"
+    "toastNotificationMsgs": {
+        "editMyProfile": "Ви успішно відредагували профіль",
+        "createTender": "Ви успішно створили тендер"
+    },
+    "navBarNotificationDropdownMsgs": {
+        "createTender": "Успішно створений тендер, з вас знято 10 балів"
     }
 }

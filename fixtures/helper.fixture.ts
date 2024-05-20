@@ -5,6 +5,7 @@ import UnitApiHelper from '../helper/unitApi.helper';
 import UserApiHelper from '../helper/userApi.helper';
 import DataGenerator from '../helper/dataGenerator.helper';
 import TenderApiHelper from '../helper/tenderApi.helper';
+import FeedbackApiHelper from '../helper/feedbackApi.helper';
 
 export type helpers = {
     helper: Helper
@@ -13,6 +14,7 @@ export type helpers = {
     userApiHelper: UserApiHelper
     tenderApiHelper: TenderApiHelper
     dataGenerator: DataGenerator
+    feedbackApiHelper: FeedbackApiHelper
 }
 
 const testHelpers = base.extend<helpers>({
@@ -33,6 +35,9 @@ const testHelpers = base.extend<helpers>({
     },
     dataGenerator: async ({ }, use) => {
         await use(new DataGenerator());
+    },
+    feedbackApiHelper: async ({ }, use) => {
+        await use(new FeedbackApiHelper());
     }
 })
 

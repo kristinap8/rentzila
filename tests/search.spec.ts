@@ -1,23 +1,11 @@
-import { test, expect } from '@playwright/test';
-import { NavBar } from '../pages/components/navbar';
-import { ProductsPage } from '../pages/units.page';
-import { UnitDetailsPage } from '../pages/unitDetails.page';
-import searchData from '../fixtures/searchData.json';
-
-let navBar: NavBar;
-let productsPage: ProductsPage;
-let unitDetailsPage: UnitDetailsPage;
+import {test, expect} from '../fixtures/fixture';
 
 test.describe('Search check', () => {
-    test.beforeEach(async ({ page }) => {
-        navBar = new NavBar(page);
-        productsPage = new ProductsPage(page);
-        unitDetailsPage = new UnitDetailsPage(page);
-
+    test.beforeEach(async ({ navBar }) => {
         await navBar.openUrl();
     });
 
-    test("C530 - Verify search input", async () => {
+    test("C530 - Verify search input", async ({navBar, searchData, unitsPage, unitDetailsPage}) => {
         await navBar.clickSearchInput();
 
         await expect(await navBar.getSearchDropdown()).toBeVisible();
@@ -26,25 +14,25 @@ test.describe('Search check', () => {
         await expect(await navBar.getSearchDropdownCategories()).toHaveText(searchData.searchDropdownCategories);
 
         await navBar.pressEnter();
-        await expect(productsPage.page).toHaveURL(/products/);
+        await expect(unitsPage.page).toHaveURL(/products/);
         await expect(await navBar.getAdvertismentsSearchInput()).toBeEmpty();
-        for (const unitCard of await productsPage.getUnitCards()) {
+        for (const unitCard of await unitsPage.getListUnitCards()) {
             await expect(unitCard).toBeVisible();
         }
 
         for (const searchPhrase of searchData.searchPhrases1) {
-            await navBar.clickLogo();
+            await navBar.clickNavbarItem('logo');
             await navBar.searchItem(searchPhrase);
-            await expect(productsPage.page).toHaveURL(/products/);
-            await expect(await productsPage.getResultCountMsg()).toContainText(searchPhrase);
-            for (const unitCard of await productsPage.getUnitCards()) {
+            await expect(unitsPage.page).toHaveURL(/products/);
+            await expect(await unitsPage.getResultCountMsg()).toContainText(searchPhrase);
+            for (const unitCard of await unitsPage.getListUnitCards()) {
                 await expect(unitCard).toBeVisible();
             }
 
-            await productsPage.clickFirstUnitCard();
+            await unitsPage.clickFirstUnitCard();
             await expect(unitDetailsPage.page).toHaveURL(/unit/);
 
-            await navBar.clickLogo();
+            await navBar.clickNavbarItem('logo');
             await navBar.clickSearchInput();
             await expect(await navBar.getSearchDropdown()).toBeVisible();
             await expect(await navBar.getLastSearchHistoryElement()).toHaveText(searchPhrase);
@@ -57,9 +45,9 @@ test.describe('Search check', () => {
         }
         await navBar.clickFirstSearchResult();
         await expect(unitDetailsPage.page).toHaveURL(/unit/);
-        await expect(await unitDetailsPage.getUnitName()).toContainText(searchData.searchPhrase2);
+        await expect(unitDetailsPage.getUnitName()).toContainText(searchData.searchPhrase2);
 
-        await navBar.clickLogo();
+        await navBar.clickNavbarItem('logo');
         await navBar.fillSearchInput(searchData.emptySearchPhrase);
         expect(await navBar.getSearchResults()).toHaveLength(0);
         await expect(await navBar.getSearchDropdownServices()).toHaveCount(0);
@@ -67,23 +55,23 @@ test.describe('Search check', () => {
         await expect(await navBar.getSearchHistoryElements()).toHaveText([searchData.emptySearchPhrase, searchData.searchPhrase2, searchData.searchPhrases1[1]]);
 
         await navBar.pressEnter();
-        await expect(productsPage.page).toHaveURL(/products/);
-        await expect(await productsPage.getResultCountMsg()).toHaveText('Знайдено 0 оголошень на видимій території за запитом " "');
+        await expect(unitsPage.page).toHaveURL(/products/);
+        await expect(await unitsPage.getResultCountMsg()).toHaveText('Знайдено 0 оголошень на видимій території за запитом " "');
 
-        await navBar.clickLogo();
+        await navBar.clickNavbarItem('logo');
         await navBar.fillSearchInput(searchData.numberSearchPhrase);
         searchResults = await navBar.getSearchResults();
         for (const searchResult of searchResults) {
             await expect(searchResult).toContainText(searchData.numberSearchPhrase);
         }
         await navBar.pressEnter();
-        await expect(await productsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено \\d+ (оголошень|оголошення)  на видимій території за запитом "${searchData.numberSearchPhrase}"$`));
+        await expect(await unitsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено \\d+ (оголошень|оголошення)  на видимій території за запитом "${searchData.numberSearchPhrase}"$`));
 
-        await productsPage.clickFirstUnitCard();
+        await unitsPage.clickFirstUnitCard();
         await expect(unitDetailsPage.page).toHaveURL(/unit/);
 
         for (const symbol of searchData.specificSymbols) {
-            await navBar.clickLogo();
+            await navBar.clickNavbarItem('logo');
             await navBar.fillSearchInput(symbol);
             await expect(await navBar.getAdvertismentsSearchInput()).toHaveValue(symbol);
             await expect(await navBar.getSearchDropdown()).toBeVisible();
@@ -93,51 +81,51 @@ test.describe('Search check', () => {
             }
 
             await navBar.pressEnter();
-            await expect(productsPage.page).toHaveURL(/products/);
-            await expect(await productsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено \\d+ (оголошень|оголошення)  на видимій території за запитом "\\${symbol}"$`));
+            await expect(unitsPage.page).toHaveURL(/products/);
+            await expect(await unitsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено \\d+ (оголошень|оголошення)  на видимій території за запитом "\\${symbol}"$`));
         }
 
         for (const symbol of searchData.bannedSpecificSymbols) {
-            await navBar.clickLogo();
+            await navBar.clickNavbarItem('logo');
             await navBar.fillSearchInput(symbol);
 
             await navBar.pressEnter();
-            await expect(productsPage.page).toHaveURL(/products/);
+            await expect(unitsPage.page).toHaveURL(/products/);
             await expect(await navBar.getAdvertismentsSearchInput()).toBeEmpty();
-            for (const unitCard of await productsPage.getUnitCards()) {
+            for (const unitCard of await unitsPage.getListUnitCards()) {
                 await expect(unitCard).toBeVisible();
             }
         }
 
-        await navBar.clickLogo();
+        await navBar.clickNavbarItem('logo');
         await navBar.fillSearchInput(searchData.nonExistingSearchPhrase);
-        await expect(await navBar.getSearchResults()).toHaveLength(0);
+        expect(await navBar.getSearchResults()).toHaveLength(0);
 
         await navBar.pressEnter();
-        await expect(productsPage.page).toHaveURL(/products/);
+        await expect(unitsPage.page).toHaveURL(/products/);
         await expect(await navBar.getAdvertismentsSearchInput()).toHaveValue(searchData.nonExistingSearchPhrase);
-        await expect(await productsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено 0 оголошень  на видимій території за запитом "${searchData.nonExistingSearchPhrase}"$`));
+        await expect(await unitsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено 0 оголошень  на видимій території за запитом "${searchData.nonExistingSearchPhrase}"$`));
 
-        await navBar.clickLogo();
+        await navBar.clickNavbarItem('logo');
         await navBar.fillSearchInput(searchData.existingServiceSearchPhrase);
         await expect(await navBar.getSearchDropdownServices()).toContainText([searchData.existingServiceSearchPhrase]);
 
         await navBar.clickServiceSearchDropdown(searchData.existingServiceSearchPhrase);
-        await expect(productsPage.page).toHaveURL(/products/);
-        await expect(await productsPage.getSelectedFilter()).toHaveText(searchData.existingServiceSearchPhrase);
-        await expect(await productsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено \\d+ (оголошень|оголошення)  на видимій території $`));
+        await expect(unitsPage.page).toHaveURL(/products/);
+        await expect(await unitsPage.getSelectedFilter()).toHaveText(searchData.existingServiceSearchPhrase);
+        await expect(await unitsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено \\d+ (оголошень|оголошення)  на видимій території $`));
 
-        await navBar.clickLogo();
+        await navBar.clickNavbarItem('logo');
         await navBar.fillSearchInput(searchData.existingVehicleSearchPhrase);
         await expect(await navBar.getSearchDropdown()).toBeVisible();
         await expect(await navBar.getSearchDropdownCategories()).toContainText([searchData.existingVehicleSearchPhrase], { ignoreCase: true });
 
         await navBar.clickCategorySearchDropdown(searchData.existingVehicleSearchPhrase);
-        await expect(productsPage.page).toHaveURL(/products/);
-        await expect(await productsPage.getSelectedFilter()).toContainText(searchData.existingVehicleSearchPhrase, { ignoreCase: true });
-        await expect(await productsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено \\d+ (оголошень|оголошення)  на видимій території $`));
+        await expect(unitsPage.page).toHaveURL(/products/);
+        await expect(await unitsPage.getSelectedFilter()).toContainText(searchData.existingVehicleSearchPhrase, { ignoreCase: true });
+        await expect(await unitsPage.getResultCountMsg()).toHaveText(new RegExp(`^Знайдено \\d+ (оголошень|оголошення)  на видимій території $`));
 
-        await navBar.clickLogo();
+        await navBar.clickNavbarItem('logo');
         await navBar.fillSearchInput(searchData.searchPhrase2);
         await expect(await navBar.getSearchDropdown()).toBeVisible();
         searchResults = await navBar.getSearchResults();

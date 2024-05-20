@@ -2,7 +2,9 @@
     "myProfile": "owner-cabinet/",
     "myTenders": "owner-tenders-page/",
     "units": "products/",
-    "myAdvertisments": "owner-units-page/",
+    "myUnits": "owner-units-page/",
     "myFavouriteUnits": "owner-favourite-units/",
-    "createUnit": "create-unit/"
+    "createUnit": "create-unit/",
+    "createTender": "owner-tenders-page/",
+    "editTender": "edit-tender/{id}/"
 }

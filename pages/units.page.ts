@@ -1,14 +1,13 @@
 import Page from './page';
 
 const resultCountMsg = 'h1[class*="MapPagination_count"]';
-const selectedFilter = '*[class*="selectedCategory"]';
-const unitsList = '*[class*="ListPagination_unitsListContainer"]';
-const listUnitCards = '*[data-testid="cardWrapper"]';
 const favouriteUnitBtn = 'div[data-testid="favourite"]';
 const favouriteImg = 'div[data-testid="favourite"] #Vector>path';
+const selectedFilter = '*[class*="selectedCategory"]';
+const unitsList = '*[class*="ListPagination_unitsListContainer"]';
+const unitCards = '*[data-testid="cardWrapper"]';
 const showUnitsListBtn = 'button[class*="MapListSwitcher_switch"]';
 const loaderIcon = '*[data-testid="preloader"]';
-
 //mobile
 const filtersBtn = 'button[data-testid="filters"]';
 const mobileShowUnitsListBtn = 'button[class*="ShowMapMobileButtons_switch"]';
@@ -31,15 +30,7 @@ export class UnitsPage extends Page {
     }
 
     async getListUnitCards() {
-        return super.getElementsArray(listUnitCards);
-    }
-
-    async getResultCountMsg() {
-        return super.getElement(resultCountMsg);
-    }
-
-    getFavouriteImg() {
-        return super.getElement(favouriteImg);
+        return super.getElementsArray(unitCards);
     }
 
     async closeFiltersLeftsideMenu() {
@@ -49,12 +40,8 @@ export class UnitsPage extends Page {
     async clickFirstUnitCard() {
         await Promise.all([
             super.waitForSelector(loaderIcon, 'detached'),
-            this.isMobile ? await super.tapElementByIndex(listUnitCards, 0) : await super.clickElementByIndex(listUnitCards, 0)
+            this.isMobile ? await super.tapElementByIndex(unitCards, 0) : await super.clickElementByIndex(unitCards, 0)
         ]);
-    }
-
-    async clickFavouriteUnitBtn() {
-        await super.clickElement(favouriteUnitBtn);
     }
 
     async switchToUnitsList() {
@@ -66,5 +53,17 @@ export class UnitsPage extends Page {
                 this.isMobile ? super.tapElement(mobileShowUnitsListBtn) : super.clickElement(showUnitsListBtn)
             ]);
         }
+    }
+
+    async getResultCountMsg() {
+        return super.getElement(resultCountMsg);
+    }
+
+    getFavouriteImg() {
+        return super.getElement(favouriteImg);
+    }
+
+    async clickFavouriteUnitBtn() {
+        await super.clickElement(favouriteUnitBtn);
     }
 }

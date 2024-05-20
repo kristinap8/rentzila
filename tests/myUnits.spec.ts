@@ -1,7 +1,4 @@
-import { test, expect } from "../fixtures/fixture";
-import * as endpoints from '../data/endpoints.data.json';
-import * as myUnits from '../data/myAdvertismentsData/data.json';
-import { mixCase, generatePartialName } from "../helper/helper";
+import { test, expect, testData } from "../fixtures/fixture";
 
 const userLoginData = {
     email: String(process.env.USER_EMAIL),
@@ -44,17 +41,17 @@ async function performUnitAction(unitApiHelper: any, unitId: number, action: 'ac
     }
 }
 
-async function verifyNonFoundUnits(myUnitsPage: any, by: 'name' | 'category' | 'empty', name?: string) {
+async function verifyNonFoundUnits(unitsData: testData['unitsData'], myUnitsPage: any, by: 'name' | 'category' | 'empty', name?: string) {
     let title: string;
     let desc: string = '';
 
     if (by === 'empty') {
-        title = myUnits.nonFoundUnitsMg.empty.title;
-        desc = myUnits.nonFoundUnitsMg.empty.desc;
+        title = unitsData.nonFoundUnitsMg.empty.title;
+        desc = unitsData.nonFoundUnitsMg.empty.desc;
     } else if (by === 'category') {
-        title = myUnits.nonFoundUnitsMg.inCategory.replace("{name}", name || "");
+        title = unitsData.nonFoundUnitsMg.inCategory.replace("{name}", name || "");
     } else {
-        title = myUnits.nonFoundUnitsMg.byName.replace("{name}", name || "");
+        title = unitsData.nonFoundUnitsMg.byName.replace("{name}", name || "");
     }
 
     await expect(myUnitsPage.getEmptyBlockTitle()).toHaveText(title);
@@ -64,20 +61,20 @@ async function verifyNonFoundUnits(myUnitsPage: any, by: 'name' | 'category' | '
 }
 
 test.describe("My units functionality check", async () => {
-    test.beforeEach(async ({ myUnitsPage, loginPopUp, telegramPopUp }) => {
-        await myUnitsPage.openUrl(endpoints.myAdvertisments);
-        await loginPopUp.login(userLoginData.email, userLoginData.password);
+    test.beforeEach(async ({ myUnitsPage, loginPopUp, telegramPopUp, endpointsData }) => {
+        await myUnitsPage.openUrl(endpointsData.myUnits);
+        await loginPopUp.login({ emailPhone: userLoginData.email, password: userLoginData.password });
         await telegramPopUp.closeTelegramPopUp();
     })
 
-    test('Check the "Мої оголошення"" page without any created units', async ({ page, baseURL, myUnitsPage }) => {
-        await verifyNonFoundUnits(myUnitsPage, 'empty');
+    test('Check the "Мої оголошення"" page without any created units', async ({ page, baseURL, myUnitsPage, endpointsData, unitsData }) => {
+        await verifyNonFoundUnits(unitsData, myUnitsPage, 'empty');
 
         await myUnitsPage.clickCreateUnitBtn();
-        await expect(page).toHaveURL(`${baseURL}${endpoints.createUnit}`);
+        await expect(page).toHaveURL(`${baseURL}${endpointsData.createUnit}`);
     })
 
-    test("Verify the tabs are clickable", async ({ unitApiHelper, dataGenerator, myUnitsPage }) => {
+    test("Verify the tabs are clickable", async ({ unitApiHelper, dataGenerator, myUnitsPage, unitsData }) => {
         const unitsCount = 1;
         const rndAction = dataGenerator.getRandomElementFromArray(tabs);
         const unitData = await createUnits(unitApiHelper, unitsCount, rndAction);
@@ -88,7 +85,7 @@ test.describe("My units functionality check", async () => {
             if (rndAction === tab) {
                 await expect(myUnitsPage.getUnitCardNames()).toHaveText(unitData[0].name);
             } else {
-                await expect(myUnitsPage.getEmptyBlockTitle()).toHaveText(myUnits.noUnitsMsgByTabs[tab]);
+                await expect(myUnitsPage.getEmptyBlockTitle()).toHaveText(unitsData.noUnitsMsgByTabs[tab]);
             }
         }
 
@@ -96,40 +93,40 @@ test.describe("My units functionality check", async () => {
         expect(response.status()).toBe(204);
     })
 
-    test("Check filtering by category", async ({ apiHelper, unitApiHelper, myUnitsPage }) => {
+    test("Check filtering by category", async ({ apiHelper, unitApiHelper, myUnitsPage, unitsData }) => {
         const unitsCount = 4;
         for (const tab of tabs) {
-            const unitsData = await createUnits(unitApiHelper, unitsCount, tab);
+            const myUnitsData = await createUnits(unitApiHelper, unitsCount, tab);
             // Get first level categories of the created units
             const firstLvlCategories: string[] = [];
-            for (const unit of unitsData) {
+            for (const unit of myUnitsData) {
                 firstLvlCategories.push(await apiHelper.getFirstLvlCategoryById(unit.category.id));
             }
 
             await myUnitsPage.refresh();
             await myUnitsPage.clickTab(tab);
 
-            await expect(myUnitsPage.getCategoriesDropdownSelectedItem()).toHaveText(myUnits.filterOptions.all);
+            await expect(myUnitsPage.getCategoriesDropdownSelectedItem()).toHaveText(unitsData['filterOptions']['all']);
             await expect(myUnitsPage.getUnitCardNames()).toHaveCount(unitsCount);
-            for (const option of myUnits.filterOptions.otherCategories) {
+            for (const option of unitsData['filterOptions']['otherCategories']) {
                 await myUnitsPage.filterByCategory(option);
                 if (firstLvlCategories.includes(option)) {
-                    const unitsNameWithSelectedCategory = unitsData.filter((unit, index) => firstLvlCategories[index] === option).map(unit => unit.name).reverse();
+                    const unitsNameWithSelectedCategory = myUnitsData.filter((unit, index) => firstLvlCategories[index] === option).map(unit => unit.name).reverse();
                     await expect(myUnitsPage.getUnitCardNames()).toHaveText(unitsNameWithSelectedCategory);
                 }
                 else {
-                    await verifyNonFoundUnits(myUnitsPage, 'category', option);
+                    await verifyNonFoundUnits(unitsData, myUnitsPage, 'category', option);
                 }
             }
 
-            for (const unit of unitsData) {
+            for (const unit of myUnitsData) {
                 const response = await unitApiHelper.deleteUnit(unit.id);
                 expect(response.status()).toBe(204);
             }
         }
     })
 
-    test("Сheck sorting units", async ({ unitApiHelper, myUnitsPage }) => {
+    test("Сheck sorting units", async ({ unitApiHelper, myUnitsPage, unitsData }) => {
         const unitsCount = 2;
         for (const tab of tabs) {
             const unitsData = await createUnits(unitApiHelper, unitsCount, tab);
@@ -139,11 +136,11 @@ test.describe("My units functionality check", async () => {
 
             await expect(myUnitsPage.getUnitCardNames()).toHaveCount(unitsCount);
 
-            await myUnitsPage.sort(myUnits.sortOptions.byDate);
+            await myUnitsPage.sort(unitsData['sortOptions']['byDate']);
             const sortedUnitsByDate = unitsData.map(unit => unit.name).reverse();
             await expect(myUnitsPage.getUnitCardNames()).toHaveText(sortedUnitsByDate);
 
-            await myUnitsPage.sort(myUnits.sortOptions.byName);
+            await myUnitsPage.sort(unitsData['sortOptions']['byName']);
             const sortedUnitsByName = (unitsData.map(unit => unit.name)).sort();
             await expect(myUnitsPage.getUnitCardNames()).toHaveText(sortedUnitsByName);
 
@@ -154,19 +151,19 @@ test.describe("My units functionality check", async () => {
         }
     })
 
-    test('Check "Заголовок оголошення" search field functionality', async ({ unitApiHelper, myUnitsPage }) => {
+    test('Check "Заголовок оголошення" search field functionality', async ({ unitApiHelper, myUnitsPage, unitsData, helper }) => {
         const unitsCount = 1;
-        let unitsData: any [] = [];
+        let myUnitsData: any[] = [];
         for (const tab of tabs) {
             const unitData = await createUnits(unitApiHelper, unitsCount, tab);
-            unitsData.push(unitData[0]);
+            myUnitsData.push(unitData[0]);
         }
 
         for (let i = 0; i < tabs.length; i++) {
             await myUnitsPage.refresh();
             await myUnitsPage.clickTab(tabs[i]);
 
-            await myUnitsPage.searchUnit(myUnits.searchUnitValue.empty, 'enter');
+            await myUnitsPage.searchUnit(unitsData.searchUnitValue.empty, 'enter');
             await expect(myUnitsPage.getUnitCardNames()).toHaveCount(unitsCount);
 
             await myUnitsPage.searchUnit(unitsData[i].name, "noClick");
@@ -177,44 +174,44 @@ test.describe("My units functionality check", async () => {
             // await myUnitsPage.searchUnit(mixedCaseUnitName, "noClick");
             // await expect(myUnitsPage.getUnitCardNames()).toHaveCount(0);
 
-            const partialUnitName = generatePartialName(unitsData[i].name);
+            const partialUnitName = helper.generatePartialName(unitsData[i].name);
             await myUnitsPage.searchUnit(partialUnitName, "noClick");
             await expect(myUnitsPage.getUnitCardNames()).toHaveText(unitsData[i].name);
 
-            await myUnitsPage.searchUnit(myUnits.searchUnitValue.nonExistingName, "noClick");
-            await verifyNonFoundUnits(myUnitsPage, "name", myUnits.searchUnitValue.nonExistingName);
+            await myUnitsPage.searchUnit(unitsData.searchUnitValue.nonExistingName, "noClick");
+            await verifyNonFoundUnits(unitsData, myUnitsPage, "name", unitsData.searchUnitValue.nonExistingName);
             await myUnitsPage.clickClearFiltersBtn();
             await expect(myUnitsPage.getUnitCardNames()).toHaveCount(unitsCount);
 
-            for (const spaces of myUnits.searchUnitValue.spaces) {
+            for (const spaces of unitsData.searchUnitValue.spaces) {
                 await myUnitsPage.searchUnit(spaces, "noClick");
-                await verifyNonFoundUnits(myUnitsPage, "name", " ");
+                await verifyNonFoundUnits(unitsData, myUnitsPage, "name", " ");
             }
 
-            for(const restrictedSymbol of myUnits.searchUnitValue.restrictedSymbols) {
+            for (const restrictedSymbol of unitsData.searchUnitValue.restrictedSymbols) {
                 await expect(myUnitsPage.getSearchInput()).toHaveText('');
             }
 
-            for (const allowedSymbol of myUnits.searchUnitValue.allowedSymbols) {
+            for (const allowedSymbol of unitsData.searchUnitValue.allowedSymbols) {
                 await myUnitsPage.searchUnit(allowedSymbol, "noClick");
-                await verifyNonFoundUnits(myUnitsPage, "name", allowedSymbol);
+                await verifyNonFoundUnits(unitsData, myUnitsPage, "name", allowedSymbol);
             }
 
-            await myUnitsPage.searchUnit(myUnits.searchUnitValue.exceeding, "noClick");
-            await verifyNonFoundUnits(myUnitsPage, "name", myUnits.searchUnitValue.exceeding.slice(0,50) + "...");
+            await myUnitsPage.searchUnit(unitsData.searchUnitValue.exceeding, "noClick");
+            await verifyNonFoundUnits(unitsData, myUnitsPage, "name", unitsData.searchUnitValue.exceeding.slice(0, 50) + "...");
 
-            await myUnitsPage.searchUnit(myUnits.searchUnitValue.multipleWords, "noClick");
-            await verifyNonFoundUnits(myUnitsPage, "name", myUnits.searchUnitValue.multipleWords);
+            await myUnitsPage.searchUnit(unitsData.searchUnitValue.multipleWords, "noClick");
+            await verifyNonFoundUnits(unitsData, myUnitsPage, "name", unitsData.searchUnitValue.multipleWords);
 
             const otherTab = tabs.filter(currentTab => currentTab !== tabs[i]).pop()!;
             await myUnitsPage.clickTab(otherTab);
             await myUnitsPage.searchUnit(unitsData[i].name);
-            await verifyNonFoundUnits(myUnitsPage, "name", unitsData[i].name);
+            await verifyNonFoundUnits(unitsData, myUnitsPage, "name", unitsData[i].name);
             await myUnitsPage.clickTab(tabs[i]);
             await expect(myUnitsPage.getUnitCardNames()).toHaveText(unitsData[i].name);
         }
 
-        for (const unit of unitsData) {
+        for (const unit of myUnitsData) {
             const response = await unitApiHelper.deleteUnit(unit.id);
             expect(response.status()).toBe(204);
         }
